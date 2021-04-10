@@ -35,6 +35,7 @@ public class TCameraToolBar : Editor
     public static int SelectedTool = 0;
     static void OnSceneGUI(SceneView sceneView)
     {
+#if TYOU_LAB
         Handles.BeginGUI();
 
         var position = sceneView.position;
@@ -50,6 +51,7 @@ public class TCameraToolBar : Editor
 
         GUILayout.EndArea();
         Handles.EndGUI();
+#endif
 
     }
 }
