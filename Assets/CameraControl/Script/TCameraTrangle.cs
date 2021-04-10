@@ -31,6 +31,20 @@ namespace TCam
             transform.position = centroid;
         }
 
+        public bool Valid()
+        {
+            if (Vertices.Count < 3)
+                return false;
+
+            for (int i = 0; i < camVertices.Length; i++)
+            {
+                if (camVertices[i] == null)
+                    return false;
+            }
+
+            return true;
+        }
+
         private void RefreshVertices()
         {
             if (camVertices == null)

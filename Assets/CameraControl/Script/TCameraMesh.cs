@@ -57,10 +57,20 @@ namespace TCam
         {
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
-                if (TCameraTrangles[i] == null)
+                var tri = TCameraTrangles[i];
+                if (tri == null)
                 { 
                     TCameraTrangles.RemoveAt(i);
                     i--;
+                    continue;
+                }
+
+                if (!tri.Valid())
+                {
+                    TCameraTrangles.RemoveAt(i);
+                    GameObject.DestroyImmediate(tri.gameObject);
+                    i--;
+                    continue;
                 }
             }
         }
@@ -82,7 +92,7 @@ namespace TCam
                 if (tri == null)
                     break;
 
-                if (tri.Vertices.Count < 3)
+                if (!tri.Valid())
                     break;
 
                 var vertices = tri.Vertices.ToArray(); 

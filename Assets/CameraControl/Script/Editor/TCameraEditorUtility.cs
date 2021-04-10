@@ -209,6 +209,13 @@ namespace TCam
             mi.Invoke(null, new object[] { gObj, texture });
         }
 
+        public static void CleanIcon(GameObject gObj)
+        {
+            var ty = typeof(EditorGUIUtility);
+            var mi = ty.GetMethod("SetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
+            mi.Invoke(null, new object[] { gObj, null });
+        }
+
         private static GUIContent[] GetTextures(string baseName, string postFix, int startIndex, int count)
         {
             GUIContent[] guiContentArray = new GUIContent[count];
