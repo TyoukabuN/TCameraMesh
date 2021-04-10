@@ -96,6 +96,13 @@ public class TCameraEdtorWindow : EditorWindow
                 gobj.transform.position = spawnPos;
 
                 util.SetIcon(gobj, util.Icon.DiamondYellow);
+
+                TCameraMesh tCamearMesh = null;
+
+                if (util.TryGetCameraMesh(out tCamearMesh))
+                {
+                    gobj.transform.SetParent(tCamearMesh.transform, false);
+                }
             }
 
             if (GUILayout.Button("选中所有顶点"))

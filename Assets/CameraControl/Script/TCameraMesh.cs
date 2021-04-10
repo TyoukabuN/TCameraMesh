@@ -124,9 +124,6 @@ namespace TCam
             if (TCameraTrangles.Count < 1)
                 return;
 
-            if (Target == null)
-                return;
-
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
                 var tri = TCameraTrangles[i];
@@ -144,11 +141,14 @@ namespace TCam
                 mesh.RecalculateBounds();
 
                 Gizmos.color = Color.red;
-
-                if (TCameraUtility.IsInsideTrangleS(mesh.vertices, Target.position))
+                if (Target != null)
                 {
-                    Gizmos.color = Color.green;
+                    if (TCameraUtility.IsInsideTrangleS(mesh.vertices, Target.position))
+                    {
+                        Gizmos.color = Color.green;
+                    }
                 }
+
                 Gizmos.DrawMesh(mesh);
 
                 Gizmos.color = Color.white;
