@@ -153,7 +153,17 @@ namespace TCam
 
                 Gizmos.color = Color.white;
 
-                Gizmos.DrawWireMesh(mesh);
+                if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D11 ||
+                    SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D12)
+                {
+                    Gizmos.DrawWireMesh(mesh);
+                }
+                else
+                {
+                    Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[1]);
+                    Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[2]);
+                    Gizmos.DrawLine(mesh.vertices[1], mesh.vertices[2]);
+                }
 
             }
         }

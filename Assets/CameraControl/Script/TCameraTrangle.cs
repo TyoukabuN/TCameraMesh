@@ -23,10 +23,12 @@ namespace TCam
 
         public void MoveToCentroid()
         {
-            if (Vertices.Count < 3)
-            {
+            if (Vertices == null)
                 return;
-            }
+
+            if (Vertices.Count < 3)
+                return;
+
             var centroid = TCameraUtility.CalCentroid(Vertices.ToArray());
             transform.position = centroid;
         }
@@ -67,11 +69,8 @@ namespace TCam
         //    if (tCameraMesh == null)
         //        return;
 
-        //    if (tCameraMesh.Target == null)
-        //        return;
-
         //    if (Vertices.Count < 3)
-        //            return;
+        //        return;
 
         //    Mesh mesh = new Mesh();
         //    mesh.vertices = Vertices.ToArray();
@@ -81,22 +80,36 @@ namespace TCam
 
         //    Gizmos.color = Color.red;
 
-        //    if (TCameraUtility.IsInsideTrangleS(mesh.vertices, tCameraMesh.Target.position))
+
+        //    if (tCameraMesh.Target != null)
         //    {
-        //        Gizmos.color = Color.green;
+        //        if (TCameraUtility.IsInsideTrangleS(mesh.vertices, tCameraMesh.Target.position))
+        //        {
+        //            Gizmos.color = Color.green;
+        //        }
         //    }
         //    Gizmos.DrawMesh(mesh);
 
         //    Gizmos.color = Color.white;
 
-        //    Gizmos.DrawWireMesh(mesh);
-
+        //    if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D11 ||
+        //        SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D12)
+        //    {
+        //        Gizmos.DrawWireMesh(mesh);
+        //    }
+        //    else
+        //    {
+        //        Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[1]);
+        //        Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[2]);
+        //        Gizmos.DrawLine(mesh.vertices[1], mesh.vertices[2]);
+        //    }
         //}
 
 
         private void OnValidate()
         {
             RefreshVertices();
+            MoveToCentroid();
         }
     }
 }

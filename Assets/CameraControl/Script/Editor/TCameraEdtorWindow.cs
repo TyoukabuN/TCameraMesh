@@ -296,7 +296,11 @@ public class TCameraEdtorWindow : EditorWindow
             }
 
 
-            TCameraEditorUtility.TryNewTrangleFormVertices(tCameraVertexList.ToArray());
+            TCameraTrangle trangle;
+            if (TCameraEditorUtility.TryNewTrangleFormVertices(tCameraVertexList.ToArray(), out trangle))
+            {
+                util.SetIcon(trangle.gameObject, util.Icon.DiamondTeal);
+            }
         }
 
         EditorGUILayout.EndVertical();

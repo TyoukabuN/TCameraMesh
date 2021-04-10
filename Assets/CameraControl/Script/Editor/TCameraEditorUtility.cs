@@ -71,9 +71,9 @@ namespace TCam
 
             return res1;
         }
-        public static bool TryNewTrangleFormVertices(TCameraVertex[] vertices)
+        public static bool TryNewTrangleFormVertices(TCameraVertex[] vertices,out TCameraTrangle trangle)
         {
-            TCameraTrangle trangle = null;
+            trangle = null;
             TCameraMesh tCamearMesh = null;
 
             if (!TryGetCameraMesh(out tCamearMesh))
