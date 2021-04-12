@@ -1,6 +1,7 @@
 ﻿/*
  * By TyoukabuN
  */
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,10 +12,40 @@ namespace TCam
     [ExecuteAlways]
     public class TCameraMesh : MonoBehaviour
     {
+        [HideInInspector]
         public static TCameraMesh currentTCameraMesh;
+        [HideInInspector]
+        private Dictionary<TCameraVertex, List<TCameraTrangle>> vertex2TranglesDict = new Dictionary<TCameraVertex, List<TCameraTrangle>>();
 
         public bool PowerOn = true;
         public bool GizmosOn = true;
+        private bool m_PerformanceOptimizationOn = true;
+        public bool PerformanceOptimizationOn
+        {
+            set
+            {
+                m_PerformanceOptimizationOn = value;
+
+                if (!m_PerformanceOptimizationOn)
+                {
+                    for (int i = 0; i < TCameraTrangles.Count; i++)
+                    {
+                        var tri = TCameraTrangles[i];
+
+                        if (tri == null)
+                            break;
+
+                        tri.PowerOn = true;
+                    }
+                }
+                else
+                { 
+                    //TODO
+                }
+            }
+            get { return m_PerformanceOptimizationOn; }
+        }
+        public float ValidRadius = 2.0f;
         public List<TCameraTrangle> TCameraTrangles = new List<TCameraTrangle>();
 
         public Transform Target;
@@ -85,11 +116,19 @@ namespace TCam
             if (Target == null)
                 return;
 
+            if (PerformanceOptimizationOn)
+            {
+                PerformanceOptimizationSetup();
+            }
+
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
                 var tri = TCameraTrangles[i];
 
                 if (tri == null)
+                    break;
+
+                if (!tri.PowerOn)
                     break;
 
                 if (!tri.Valid())
@@ -114,6 +153,47 @@ namespace TCam
                     }
                 }
             }
+        }
+
+        private void PerformanceOptimizationSetup()
+        {
+
+        }
+
+        public bool TryGetTranglesByVertex(TCameraVertex vertex, out TCameraTrangle[] trangles)
+        {
+            List<TCameraTrangle> trangleList;
+            if (vertex2TranglesDict.TryGetValue(vertex,out trangleList))
+            {
+                trangles = trangleList.ToArray();
+                return true;
+            }
+
+            trangles = null;
+            return false;
+        }
+        public List<TCameraVertex> GetAllVertices()
+        {
+            var vertices = new List<TCameraVertex>();
+            for (int i = 0; i < TCameraTrangles.Count; i++)
+            {
+                var tri = TCameraTrangles[i];
+
+                if (tri == null)
+                    break;
+
+                for (int j = 0; i < tri.camVertices.Length; i++)
+                {
+                    var ver = tri.camVertices[i];
+
+                    if (ver == null)
+                        break;
+
+                    vertices.Add(ver);
+                }
+            }
+
+            return vertices;
         }
 
         void OnDrawGizmos()

@@ -30,7 +30,6 @@ namespace TCam
         }
 
 
-
         private static TCameraVertex[] book;
         private static Dictionary<TCameraVertex, bool> book2;
         private static bool TryGetClockwiseOrderLoop(TCameraVertex[] vertices,int step = 0)

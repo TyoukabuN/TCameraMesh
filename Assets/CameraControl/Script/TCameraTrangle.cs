@@ -6,9 +6,19 @@ namespace TCam
 {
     public class TCameraTrangle : MonoBehaviour
     {
+        public bool PowerOn = true;
+
         [SerializeField]
         public TCameraVertex[] camVertices;
-        
+
+        public TCameraVertex this[int index]
+        {
+            get 
+            { 
+                return camVertices[index]; 
+            }
+        }
+
         private List<Vector3> m_Vertices;
         public List<Vector3> Vertices
         {
@@ -46,7 +56,6 @@ namespace TCam
 
             return true;
         }
-
         private void RefreshVertices()
         {
             if (camVertices == null)

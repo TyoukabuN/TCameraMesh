@@ -6,8 +6,9 @@ namespace TCam
 {
     public class TCameraVertex : MonoBehaviour
     {
+        public TCameraTrangle trangle;
         public Vector3 EularAngle = Vector3.zero;
-
+        public Vector3 PivotPosition = Vector3.zero;
         public float x
         {
             get {
