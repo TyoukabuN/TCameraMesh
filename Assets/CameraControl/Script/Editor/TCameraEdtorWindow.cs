@@ -33,35 +33,6 @@ public class TCameraEdtorWindow : EditorWindow
     }
     void OnGUI()
     {
-        if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode)
-        {
-            GUILayout.FlexibleSpace();
-
-            EditorGUILayout.BeginHorizontal(UnityEditor.EditorStyles.helpBox);
-
-            GUILayout.Label("游戏运行中不显示", new GUIStyle() { alignment = TextAnchor.MiddleCenter }, GUILayout.ExpandWidth(true));
-
-            EditorGUILayout.EndHorizontal();
-
-            GUILayout.FlexibleSpace();
-
-            return;
-        }
-
-        if (UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null)
-        {
-            GUILayout.FlexibleSpace();
-
-            EditorGUILayout.BeginHorizontal(UnityEditor.EditorStyles.helpBox);
-
-            GUILayout.Label("Prefab Mode中不显示", new GUIStyle() { alignment = TextAnchor.MiddleCenter }, GUILayout.ExpandWidth(true));
-
-            EditorGUILayout.EndHorizontal();
-
-            GUILayout.FlexibleSpace();
-
-            return;
-        }
 
         EditorGUILayout.BeginVertical();
 
@@ -120,15 +91,7 @@ public class TCameraEdtorWindow : EditorWindow
 
             if (GUILayout.Button("标记所有顶点"))
             {
-                var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
-
-                var gobjs = new List<Object>();
-                for (int i = 0; i < tCameraVertexs.Length; i++)
-                {
-                    var gobj = tCameraVertexs[i].gameObject;
-                    Undo.RecordObject(gobj, "Mask All TCameraVertex");
-                    util.SetIcon(gobj, util.Icon.DiamondYellow);
-                }
+                MaskAllVertex();
             }
         }
 
@@ -156,33 +119,12 @@ public class TCameraEdtorWindow : EditorWindow
 
             if (GUILayout.Button("标记所有三角形"))
             {
-                var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
-
-                var gobjs = new List<Object>();
-                for (int i = 0; i < objs.Length; i++)
-                {
-                    var gobj = objs[i].gameObject;
-                    util.SetIcon(gobj, util.Icon.DiamondTeal);
-                }
+                MaskAllTrangle();
             }
 
             if (GUILayout.Button("将所有三角形Gobj移动至重心"))
             {
-                var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
-
-                var gobjs = new List<Object>();
-                for (int i = 0; i < objs.Length; i++)
-                {
-                    var gobj = objs[i].gameObject;
-                    util.SetIcon(gobj, util.Icon.DiamondTeal);
-                }
-
-                objs = GameObject.FindObjectsOfType<TCameraTrangle>();
-                for (int i = 0; i < objs.Length; i++)
-                {
-                    objs[i].MoveToCentroid();
-                }
-
+                MoveAllTrangleGobjToCentroid();
             }
 
             if (GUILayout.Button("将三角形加入网格"))
@@ -229,8 +171,18 @@ public class TCameraEdtorWindow : EditorWindow
 
 
 
-        if (GUILayout.Button("清理所有标记"))
+        if (GUILayout.Button("显示/隐藏所有标记"))
         {
+            if (!maskSwitch)
+            {
+                MaskAllVertex();
+                MaskAllTrangle();
+                MoveAllTrangleGobjToCentroid();
+                maskSwitch = true;
+                return;
+            }
+
+            maskSwitch = false;
             var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
 
             var gobjs = new List<Object>();
@@ -256,6 +208,17 @@ public class TCameraEdtorWindow : EditorWindow
             }
         }
 
+        if (GUILayout.Button("显示/隐藏网格"))
+        {
+            TCameraMesh tCamearMesh = null;
+
+            if (util.TryGetCameraMesh(out tCamearMesh))
+            {
+                tCamearMesh.GizmosOn = !tCamearMesh.GizmosOn;
+                SceneView.RepaintAll();
+            }
+        }
+
         if (GUILayout.Button("选择网格对象"))
         {
             var objs = GameObject.FindObjectsOfType<TCameraMesh>();
@@ -268,6 +231,7 @@ public class TCameraEdtorWindow : EditorWindow
 
             Selection.objects = gobjs.ToArray();
         }
+
         if (GUILayout.Button("合并顶点成三角形"))
         {
             if (Selection.gameObjects.Length <= 0)
@@ -311,7 +275,48 @@ public class TCameraEdtorWindow : EditorWindow
         }
 
         EditorGUILayout.EndVertical();
-    }   
-    
+    }
 
+    private static void MoveAllTrangleGobjToCentroid()
+    {
+        var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
+
+        var gobjs = new List<Object>();
+        for (int i = 0; i < objs.Length; i++)
+        {
+            var gobj = objs[i].gameObject;
+            util.SetIcon(gobj, util.Icon.DiamondTeal);
+        }
+
+        objs = GameObject.FindObjectsOfType<TCameraTrangle>();
+        for (int i = 0; i < objs.Length; i++)
+        {
+            objs[i].MoveToCentroid();
+        }
+    }
+
+    private static void MaskAllTrangle()
+    {
+        var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
+
+        var gobjs = new List<Object>();
+        for (int i = 0; i < objs.Length; i++)
+        {
+            var gobj = objs[i].gameObject;
+            util.SetIcon(gobj, util.Icon.DiamondTeal);
+        }
+    }
+    private static bool maskSwitch = false;
+    private static void MaskAllVertex()
+    {
+        var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+
+        var gobjs = new List<Object>();
+        for (int i = 0; i < tCameraVertexs.Length; i++)
+        {
+            var gobj = tCameraVertexs[i].gameObject;
+            Undo.RecordObject(gobj, "Mask All TCameraVertex");
+            util.SetIcon(gobj, util.Icon.DiamondYellow);
+        }
+    }
 }
