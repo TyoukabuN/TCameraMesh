@@ -344,6 +344,12 @@ public class TCameraEdtorWindow : EditorWindow
 
         if (EditorGUILayout.BeginFadeGroup(animBool_other.faded))
         {
+            if (GUILayout.Button("帮助文档"))
+            {
+                WWW www = new WWW("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi");
+                Application.OpenURL(www.url);
+            }
+
             if (GUILayout.Button("选择网格对象"))
             {
                 var objs = GameObject.FindObjectsOfType<TCameraMesh>();
