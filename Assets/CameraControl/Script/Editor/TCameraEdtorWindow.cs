@@ -22,7 +22,11 @@ public class TCameraEdtorWindow : EditorWindow
         SceneView.onSceneGUIDelegate -= OnSceneGUI;
     }
 
-
+    static TCameraEdtorWindow()
+    {
+        SceneView.onSceneGUIDelegate -= OnSceneGUI;
+        SceneView.onSceneGUIDelegate += OnSceneGUI;
+    }
 
     private void Init()
     {
@@ -30,25 +34,54 @@ public class TCameraEdtorWindow : EditorWindow
         SceneView.onSceneGUIDelegate += OnSceneGUI;
     }
 
-    private static bool group_trangle = false;
-
     public static AnimBool animBool_vertex;
     public static AnimBool animBool_trangle;
     public static AnimBool animBool_editor;
+    public static AnimBool animBool_other;
 
     void OnEnable()
     {
-        animBool_vertex = new AnimBool(true);
+        animBool_vertex = new AnimBool(false);
         animBool_vertex.valueChanged.AddListener(Repaint);
-        animBool_trangle = new AnimBool(true);
+        animBool_trangle = new AnimBool(false);
         animBool_trangle.valueChanged.AddListener(Repaint);
         animBool_editor = new AnimBool(true);
         animBool_editor.valueChanged.AddListener(Repaint);
+        animBool_other = new AnimBool(true);
+        animBool_other.valueChanged.AddListener(Repaint);
     }
 
     public static bool vertexEditorMode = false;
     public static bool trangleEditorMode = false;
     static void OnSceneGUI(SceneView sceneView)
+    {
+        OnEditorModeHotkey(sceneView);
+        OnEditorModeSelect(sceneView);
+    }
+    /// <summary>
+    /// 编辑模式下的快捷键
+    /// </summary>
+    /// <param name="sceneView"></param>
+    static void OnEditorModeHotkey(SceneView sceneView)
+    {
+        if (!vertexEditorMode)
+            return;
+
+        int controlId = GUIUtility.GetControlID(FocusType.Keyboard);
+        if (Event.current.type == EventType.KeyDown &&
+            Event.current.control == true &&
+             Event.current.keyCode == KeyCode.X
+            )
+        {
+            CombineVerticesAsTrangle();
+        }
+    }
+
+    /// <summary>
+    /// 编辑模式下的选择过滤
+    /// </summary>
+    /// <param name="sceneView"></param>
+    static void OnEditorModeSelect(SceneView sceneView)
     {
         if (Selection.objects.Length <= 0)
         {
@@ -57,7 +90,7 @@ public class TCameraEdtorWindow : EditorWindow
         List<Object> temp = new List<Object>();
 
         if (vertexEditorMode)
-        { 
+        {
             for (int i = 0; i < Selection.objects.Length; i++)
             {
                 Object obj = Selection.objects[i];
@@ -65,6 +98,11 @@ public class TCameraEdtorWindow : EditorWindow
                 {
                     temp.Add(obj);
                 }
+            }
+
+            if (Selection.activeObject != null && !temp.Contains(Selection.activeObject))
+            {
+                temp.Add(Selection.activeObject);
             }
         }
 
@@ -78,17 +116,30 @@ public class TCameraEdtorWindow : EditorWindow
                     temp.Add(obj);
                 }
             }
+
+            if (Selection.activeObject != null && !temp.Contains(Selection.activeObject))
+            {
+                temp.Add(Selection.activeObject);
+            }
         }
 
         if (vertexEditorMode || trangleEditorMode)
-        { 
+        {
             Selection.objects = temp.ToArray();
-            Selection.activeObject = temp.Count > 0 ? temp[0] : null;
+
+            if (Selection.activeObject != null && temp.Contains(Selection.activeObject))
+            {
+
+            }
+            else
+            {
+                Selection.activeObject = temp.Count > 0 ? temp[0] : null;
+            }
         }
     }
+
     void OnGUI()
     {
-
         EditorGUILayout.BeginVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -259,16 +310,16 @@ public class TCameraEdtorWindow : EditorWindow
         if (EditorGUILayout.BeginFadeGroup(animBool_editor.faded))
         {
             GUI.color = vertexEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
-            string buttonStr = vertexEditorMode? "关闭顶点编辑模式" : "开启顶点编辑模式";
-            if (GUILayout.Button(buttonStr))
+            string buttonStr = vertexEditorMode? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
+            if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,框选只会选择到<顶点>,而且激活顶点合并快捷键<Ctrl +X>")))
             {
                 vertexEditorMode = !vertexEditorMode;
             }
             GUI.color = Color.white;
 
             GUI.color = trangleEditorMode? new Color(0f, 0.95f, 0.95f, 1f):Color.white;
-            buttonStr = trangleEditorMode ? "关闭三角形编辑模式" : "开启三角形编辑模式";
-            if (GUILayout.Button(buttonStr))
+            buttonStr = trangleEditorMode ? "关闭<三角形>编辑模式" : "开启<三角形>编辑模式";
+            if (GUILayout.Button(new GUIContent(buttonStr, "开启后只会框选到<三角形>")))
             {
                 trangleEditorMode = !trangleEditorMode;
             }
@@ -277,120 +328,136 @@ public class TCameraEdtorWindow : EditorWindow
         EditorGUILayout.EndFadeGroup();
         EditorGUILayout.EndToggleGroup();
         EditorGUILayout.EndVertical();
-
-
         
 
-        if (GUILayout.Button("合并顶点成三角形"))
+        if (GUILayout.Button(new GUIContent("合并顶点成三角形", "<顶点>编辑模式下,激活快捷键<Ctrl +X>")))
         {
-            if (Selection.gameObjects.Length <= 0)
-            {
-                EditorUtility.DisplayDialog("提醒", "请选择至少3个顶点", "知道了");
-                return;
-            }
-
-            var tCameraVertexList = new List<TCameraVertex>();
-            for (int i = 0; i < Selection.gameObjects.Length; i++)
-            {
-                var gobj = Selection.gameObjects[i];
-                var vertex = gobj.GetComponent<TCameraVertex>();
-                if (vertex == null)
-                    continue;
-
-                if (tCameraVertexList.Count == 3)
-                    break;
-
-                tCameraVertexList.Add(vertex);
-            }
-
-            if (tCameraVertexList.Count < 3)
-            {
-                EditorUtility.DisplayDialog("提醒", "请选择至少3个顶点","知道了");
-                return;
-            }
-
-            if (util.IsTrangleExists(tCameraVertexList.ToArray()))
-            {
-                EditorUtility.DisplayDialog("提醒", "已存在拥有相同顶点的三角形", "知道了");
-                return;
-            }
-
-
-            TCameraTrangle trangle;
-            if (TCameraEditorUtility.TryNewTrangleFormVertices(tCameraVertexList.ToArray(), out trangle))
-            {
-                util.SetIcon(trangle.gameObject, util.Icon.DiamondTeal);
-            }
+            CombineVerticesAsTrangle();
         }
 
         EditorGUILayout.EndVertical();
-
         GUILayout.FlexibleSpace();
 
-        if (GUILayout.Button("选择网格对象"))
-        {
-            var objs = GameObject.FindObjectsOfType<TCameraMesh>();
 
-            var gobjs = new List<Object>();
-            for (int i = 0; i < objs.Length; i++)
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        animBool_other.target = EditorGUILayout.BeginToggleGroup("其他", animBool_other.target);
+
+        if (EditorGUILayout.BeginFadeGroup(animBool_other.faded))
+        {
+            if (GUILayout.Button("选择网格对象"))
             {
-                gobjs.Add(objs[i].gameObject);
+                var objs = GameObject.FindObjectsOfType<TCameraMesh>();
+
+                var gobjs = new List<Object>();
+                for (int i = 0; i < objs.Length; i++)
+                {
+                    gobjs.Add(objs[i].gameObject);
+                }
+
+                Selection.objects = gobjs.ToArray();
             }
 
-            Selection.objects = gobjs.ToArray();
+            if (GUILayout.Button("显示/隐藏所有标记"))
+            {
+                if (!maskSwitch)
+                {
+                    MaskAllVertex();
+                    MaskAllTrangle();
+                    MoveAllTrangleGobjToCentroid();
+                    maskSwitch = true;
+                    return;
+                }
+
+                maskSwitch = false;
+                var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+
+                var gobjs = new List<Object>();
+                for (int i = 0; i < tCameraVertexs.Length; i++)
+                {
+                    var gobj = tCameraVertexs[i].gameObject;
+
+                    Undo.RecordObject(gobj, "Clear All TCameraVertex Mask");
+
+                    util.CleanIcon(gobj);
+                }
+
+                var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
+
+                gobjs = new List<Object>();
+                for (int i = 0; i < objs.Length; i++)
+                {
+                    var gobj = objs[i].gameObject;
+
+                    Undo.RecordObject(gobj, "Clear All TCameraTrangle Mask");
+
+                    util.CleanIcon(gobj);
+                }
+            }
+
+            if (GUILayout.Button("显示/隐藏网格"))
+            {
+                TCameraMesh tCamearMesh = null;
+
+                if (util.TryGetCameraMesh(out tCamearMesh))
+                {
+                    tCamearMesh.GizmosOn = !tCamearMesh.GizmosOn;
+                    SceneView.RepaintAll();
+                }
+            }
+
+#if TYOU_LAB
+            if (GUILayout.Button("Init"))
+            {
+                Init();
+            }
+#endif
+        }
+        EditorGUILayout.EndFadeGroup();
+        EditorGUILayout.EndToggleGroup();
+        EditorGUILayout.EndVertical();
+
+       
+    }
+
+    static void CombineVerticesAsTrangle()
+    {
+        if (Selection.gameObjects.Length <= 0)
+        {
+            EditorUtility.DisplayDialog("提醒", "请选择至少3个顶点", "知道了");
+            return;
         }
 
-        if (GUILayout.Button("显示/隐藏所有标记"))
+        var tCameraVertexList = new List<TCameraVertex>();
+        for (int i = 0; i < Selection.gameObjects.Length; i++)
         {
-            if (!maskSwitch)
-            {
-                MaskAllVertex();
-                MaskAllTrangle();
-                MoveAllTrangleGobjToCentroid();
-                maskSwitch = true;
-                return;
-            }
+            var gobj = Selection.gameObjects[i];
+            var vertex = gobj.GetComponent<TCameraVertex>();
+            if (vertex == null)
+                continue;
 
-            maskSwitch = false;
-            var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+            if (tCameraVertexList.Count == 3)
+                break;
 
-            var gobjs = new List<Object>();
-            for (int i = 0; i < tCameraVertexs.Length; i++)
-            {
-                var gobj = tCameraVertexs[i].gameObject;
-
-                Undo.RecordObject(gobj, "Clear All TCameraVertex Mask");
-
-                util.CleanIcon(gobj);
-            }
-
-            var objs = GameObject.FindObjectsOfType<TCameraTrangle>();
-
-            gobjs = new List<Object>();
-            for (int i = 0; i < objs.Length; i++)
-            {
-                var gobj = objs[i].gameObject;
-
-                Undo.RecordObject(gobj, "Clear All TCameraTrangle Mask");
-
-                util.CleanIcon(gobj);
-            }
+            tCameraVertexList.Add(vertex);
         }
 
-        if (GUILayout.Button("显示/隐藏网格"))
+        if (tCameraVertexList.Count < 3)
         {
-            TCameraMesh tCamearMesh = null;
-
-            if (util.TryGetCameraMesh(out tCamearMesh))
-            {
-                tCamearMesh.GizmosOn = !tCamearMesh.GizmosOn;
-                SceneView.RepaintAll();
-            }
+            EditorUtility.DisplayDialog("提醒", "请选择至少3个顶点", "知道了");
+            return;
         }
 
-        if (GUILayout.Button("Init"))
+        if (util.IsTrangleExists(tCameraVertexList.ToArray()))
         {
-            Init();
+            EditorUtility.DisplayDialog("提醒", "已存在拥有相同顶点的三角形", "知道了");
+            return;
+        }
+
+
+        TCameraTrangle trangle;
+        if (TCameraEditorUtility.TryNewTrangleFormVertices(tCameraVertexList.ToArray(), out trangle))
+        {
+            util.SetIcon(trangle.gameObject, util.Icon.DiamondTeal);
         }
     }
 

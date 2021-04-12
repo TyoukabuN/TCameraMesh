@@ -19,6 +19,7 @@ namespace TCam
                 GameObject gobj = new GameObject("TCameraMesh");
                 gobj.transform.position = Vector3.zero;
                 tCameraMesh = gobj.AddComponent<TCameraMesh>();
+                SetIcon(gobj, Icon.DiamondPurple);
             }
 
             if (tCameraMesh != null)
