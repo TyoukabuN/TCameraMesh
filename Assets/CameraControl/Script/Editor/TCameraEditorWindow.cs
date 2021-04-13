@@ -9,12 +9,12 @@ using TCam;
 using util = TCam.TCameraEditorUtility;
 using Object = UnityEngine.Object;
 
-public class TCameraEdtorWindow : EditorWindow
+public class TCameraEditorWindow : EditorWindow
 {
     [MenuItem("TCam/ToolBar")]
     static void Open()
     {
-        EditorWindow.GetWindow<TCameraEdtorWindow>().Init();
+        EditorWindow.GetWindow<TCameraEditorWindow>().Init();
     }
 
     void OnDestroy()
@@ -22,7 +22,7 @@ public class TCameraEdtorWindow : EditorWindow
         SceneView.onSceneGUIDelegate -= OnSceneGUI;
     }
 
-    static TCameraEdtorWindow()
+    static TCameraEditorWindow()
     {
         SceneView.onSceneGUIDelegate -= OnSceneGUI;
         SceneView.onSceneGUIDelegate += OnSceneGUI;
@@ -194,7 +194,7 @@ public class TCameraEdtorWindow : EditorWindow
 
         var gobj = new GameObject(name, new System.Type[] { typeof(TCameraVertex) });
 
-        Undo.RecordObject(gobj, "Create TCameraVertex");
+        Undo.RegisterCreatedObjectUndo(gobj, "Create TCameraVertex");
 
         gobj.transform.position = spawnPos;
 
@@ -397,7 +397,7 @@ public class TCameraEdtorWindow : EditorWindow
                 }
 
                 var checker = new GameObject("Checker",new Type[] { typeof(SimpleController)});
-                Undo.RecordObject(checker, "General Checker");
+                Undo.RegisterCreatedObjectUndo(checker, "General Checker");
                 util.SetIcon(checker, util.Icon.CirclePurple);
 
 

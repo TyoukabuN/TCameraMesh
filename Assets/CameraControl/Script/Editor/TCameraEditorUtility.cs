@@ -103,7 +103,7 @@ namespace TCam
             gobj.transform.SetParent(tCamearMesh.transform, false);
             trangle.MoveToCentroid();
 
-            UnityEditor.Undo.RecordObject(tCamearMesh, "New Trangle");
+            UnityEditor.Undo.RegisterCreatedObjectUndo(tCamearMesh, "New Trangle");
             if (!tCamearMesh.AddTrangle(trangle))
             {
                 GameObject.DestroyImmediate(trangle);
