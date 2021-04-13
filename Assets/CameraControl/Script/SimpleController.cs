@@ -5,7 +5,8 @@ using TCam;
 public class SimpleController : MonoBehaviour
 {
     public Camera Camera;
-    public Transform CameraPivot;
+    public Transform AxiY;
+    public Transform AxiX;
 
     private string HorizontalAxi = "Horizontal";
     private string VerticalAxi = "Vertical";
@@ -20,37 +21,46 @@ public class SimpleController : MonoBehaviour
             mesh.OnPositionChanged.AddListener(OnPositionChanged);
         }
 
-        if (CameraPivot == null)
+        if (AxiY == null)
         {
-            var pivot = new GameObject("piovt");
-            pivot.transform.SetParent(transform);
-            CameraPivot = pivot.transform;
+            var obj = new GameObject("AxiY");
+            obj.transform.SetParent(transform);
+            AxiY = obj.transform;
         }
-        CameraPivot.transform.localPosition = Vector3.zero;
+        AxiY.transform.localPosition = Vector3.zero;
+
+        if (AxiX == null)
+        {
+            var obj = new GameObject("AxiX");
+            obj.transform.SetParent(AxiY);
+            AxiX = obj.transform;
+        }
+        AxiX.transform.localPosition = Vector3.zero;
 
         if (Camera == null)
         {
             Camera = Camera.main;
             if (Camera == null)
             {
-                var gobj = new GameObject("tempPiovt");
+                var gobj = new GameObject("tempCam");
                 var camera = gobj.AddComponent<Camera>();
                 Camera = camera;
             }
         }
 
-        Camera.transform.SetParent(CameraPivot);
+        Camera.transform.SetParent(AxiX);
         Camera.transform.localPosition = Vector3.zero;
         Camera.transform.localRotation = Quaternion.identity;
     }
 
     void OnPositionChanged(Vector3 cameraEular, Vector3 pivotPosition)
     {
-        Camera.transform.eulerAngles = new Vector3(cameraEular.x, Camera.transform.eulerAngles.y, -Camera.transform.eulerAngles.z);
-        Camera.transform.localPosition = new Vector3(0, 0, -cameraEular.z);
+        AxiY.transform.localEulerAngles = new Vector3(0, cameraEular.y, 0);
+        AxiX.transform.localEulerAngles = new Vector3(cameraEular.x, 0, 0);
+        AxiX.localPosition = pivotPosition;
 
-        CameraPivot.transform.eulerAngles = new Vector3(0, cameraEular.y, 0);
-        CameraPivot.localPosition = pivotPosition;
+        Camera.transform.localEulerAngles = Vector3.zero;
+        Camera.transform.localPosition = new Vector3(0, 0, -cameraEular.z);
     }
 
     void Update()

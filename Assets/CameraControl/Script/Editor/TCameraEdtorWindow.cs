@@ -391,19 +391,20 @@ public class TCameraEdtorWindow : EditorWindow
                 var objs = GameObject.FindObjectsOfType<SimpleController>();
                 if (objs.Length > 0)
                 {
-                    util.SetIcon(objs[0].gameObject, util.Icon.DiamondPurple);
+                    util.SetIcon(objs[0].gameObject, util.Icon.CirclePurple);
                     EditorUtility.DisplayDialog("提醒", "场景中已经存在镜头检测器了，帮你标成圆形紫色了", "知道了");
                     return;
                 }
 
                 var checker = new GameObject("Checker",new Type[] { typeof(SimpleController)});
                 Undo.RecordObject(checker, "General Checker");
-                util.SetIcon(checker, util.Icon.DiamondPurple);
+                util.SetIcon(checker, util.Icon.CirclePurple);
 
 
                 TCameraMesh mesh;
                 if (util.TryGetCameraMesh(out mesh))
                 {
+                    mesh.SetTarget(checker.transform);
                     checker.transform.SetParent(mesh.transform, false) ;
                     checker.transform.position = Vector3.zero;
                     //如果有顶点，放到第一个顶点那里去
