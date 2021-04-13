@@ -6,6 +6,9 @@ namespace TCam
 {
     public class TCameraVertex : MonoBehaviour
     {
+#if !TYOU_LAB
+        [HideInInspector]
+#endif
         public TCameraTrangle trangle;
         public Vector3 EularAngle = Vector3.zero;
         public Vector3 PivotPosition = Vector3.zero;

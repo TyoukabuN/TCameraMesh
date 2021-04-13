@@ -69,6 +69,13 @@ public class TCameraEdtorWindow : EditorWindow
 
         int controlId = GUIUtility.GetControlID(FocusType.Keyboard);
         if (Event.current.type == EventType.KeyDown &&
+        Event.current.control == true &&
+         Event.current.keyCode == KeyCode.Q
+        )
+        {
+            GeneralVertex();
+        }
+        if (Event.current.type == EventType.KeyDown &&
             Event.current.control == true &&
              Event.current.keyCode == KeyCode.X
             )
@@ -127,6 +134,33 @@ public class TCameraEdtorWindow : EditorWindow
         {
             Selection.objects = temp.ToArray();
 
+            if (Selection.activeObject.name.LastIndexOf("CVertex") >= 0)
+            {
+                if (vertexEditorMode && trangleEditorMode)
+                {
+                }
+                else if (vertexEditorMode)
+                {
+                }
+                else if (trangleEditorMode) {
+                    Selection.activeObject = null;
+                }
+            }
+
+            if (Selection.activeObject.name.LastIndexOf("CTrangle") >= 0)
+            {
+                if (vertexEditorMode && trangleEditorMode)
+                {
+                }
+                else if (vertexEditorMode)
+                {
+                    Selection.activeObject = null;
+                }
+                else if (trangleEditorMode)
+                {
+                }
+            }
+
             if (Selection.activeObject != null && temp.Contains(Selection.activeObject))
             {
 
@@ -138,6 +172,74 @@ public class TCameraEdtorWindow : EditorWindow
         }
     }
 
+    static void GeneralVertex()
+    {
+        var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+
+        //Selection.activeObject = SceneView.currentDrawingSceneView;
+        var sceneView = SceneView.currentDrawingSceneView;
+        if (sceneView == null)
+        {
+            sceneView = SceneView.lastActiveSceneView;
+        }
+        Camera sceneCam = sceneView.camera;
+        Vector3 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 30f));
+
+
+        var name = "CVertex";
+        if (tCameraVertexs.Length > 0)
+        {
+            name = string.Format("CVertex ({0})", tCameraVertexs.Length);
+        }
+
+        var gobj = new GameObject(name, new System.Type[] { typeof(TCameraVertex) });
+
+        Undo.RecordObject(gobj, "Create TCameraVertex");
+
+        gobj.transform.position = spawnPos;
+
+        util.SetIcon(gobj, util.Icon.DiamondYellow);
+
+        Selection.activeObject = gobj;
+
+        TCameraMesh tCamearMesh = null;
+        if (util.TryGetCameraMesh(out tCamearMesh))
+        {
+            gobj.transform.SetParent(tCamearMesh.transform, false);
+
+            /*
+             * 将刚生成出来的顶点移动到最后的三角形的顶点所在平面上去
+             * 如果没有就移动了
+             */
+            if (tCamearMesh.TCameraTrangles.Count > 0)
+            {
+                var trangle = tCamearMesh.TCameraTrangles[tCamearMesh.TCameraTrangles.Count - 1];
+                Vector3 a = trangle[2].transform.position - trangle[0].transform.position;
+                Vector3 b = trangle[1].transform.position - trangle[0].transform.position;
+                Vector3 c = sceneCam.transform.position - trangle[0].transform.position;
+                Vector3 p = spawnPos - trangle[0].transform.position;
+
+                var normal = Vector3.Cross(a, b);
+                var cos = Vector3.Dot(c.normalized, normal.normalized);
+                var perpendicular = normal.normalized * c.magnitude * cos;
+
+                var parallel = c - perpendicular;
+                //var project = parallel + trangle[0].transform.position;
+
+                parallel = parallel + trangle[0].transform.position;
+                //var project = Vector3.Cross(normal,Vector3.Cross(c, normal)) + trangle[0].transform.position;
+
+                var pc = parallel - sceneCam.transform.position;
+                var pp = spawnPos - sceneCam.transform.position;
+                cos = Vector3.Dot(pc.normalized, pp.normalized);
+                var pp2Len = pc.magnitude / cos;
+
+                gobj.transform.position = pp.normalized * pp2Len + sceneCam.transform.position;
+            }
+
+        }
+    }
+
     void OnGUI()
     {
         EditorGUILayout.BeginVertical();
@@ -146,74 +248,9 @@ public class TCameraEdtorWindow : EditorWindow
         animBool_vertex.target = EditorGUILayout.BeginToggleGroup("顶点相关", animBool_vertex.target);
         if (EditorGUILayout.BeginFadeGroup(animBool_vertex.faded))
         { 
-            if (GUILayout.Button("生成Camera顶点"))
+            if (GUILayout.Button(new GUIContent("生成Camera顶点", "<顶点>编辑模式下,激活快捷键<Ctrl + Q>")))
             {
-                var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
-
-                //Selection.activeObject = SceneView.currentDrawingSceneView;
-                var sceneView = SceneView.currentDrawingSceneView;
-                if (sceneView == null)
-                {
-                    sceneView = SceneView.lastActiveSceneView;
-                }
-                Camera sceneCam = sceneView.camera;
-                Vector3 spawnPos = sceneCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 30f));
-
-
-                var name = "CVertex";
-                if (tCameraVertexs.Length > 0)
-                {
-                    name = string.Format("CVertex ({0})", tCameraVertexs.Length);
-                }
-
-                var gobj = new GameObject(name,new System.Type[]{typeof(TCameraVertex)});
-
-                Undo.RecordObject(gobj, "Create TCameraVertex");
-
-                gobj.transform.position = spawnPos;
-
-                util.SetIcon(gobj, util.Icon.DiamondYellow);
-
-                Selection.activeObject = gobj;
-
-                TCameraMesh tCamearMesh = null;
-                if (util.TryGetCameraMesh(out tCamearMesh))
-                {
-                    gobj.transform.SetParent(tCamearMesh.transform, false);
-
-                    /*
-                     * 将刚生成出来的顶点移动到最后的三角形的顶点所在平面上去
-                     * 如果没有就移动了
-                     */
-                    if (tCamearMesh.TCameraTrangles.Count > 0)
-                    {
-                        var trangle = tCamearMesh.TCameraTrangles[tCamearMesh.TCameraTrangles.Count - 1];
-                        Vector3 a = trangle[2].transform.position - trangle[0].transform.position;
-                        Vector3 b = trangle[1].transform.position - trangle[0].transform.position;
-                        Vector3 c = sceneCam.transform.position - trangle[0].transform.position;
-                        Vector3 p = spawnPos - trangle[0].transform.position;
-
-                        var normal = Vector3.Cross(a, b);
-                        var cos = Vector3.Dot(c.normalized, normal.normalized);
-                        var perpendicular = normal.normalized * c.magnitude * cos;
-
-                        var parallel = c - perpendicular;
-                        //var project = parallel + trangle[0].transform.position;
-
-                        parallel = parallel + trangle[0].transform.position;
-                        //var project = Vector3.Cross(normal,Vector3.Cross(c, normal)) + trangle[0].transform.position;
-
-                        var pc = parallel - sceneCam.transform.position;
-                        var pp = spawnPos - sceneCam.transform.position;
-                        cos = Vector3.Dot(pc.normalized, pp.normalized);
-                        var pp2Len = pc.magnitude / cos;
-
-                        gobj.transform.position = pp.normalized * pp2Len + sceneCam.transform.position;
-                    }
-
-                }
-
-                
+                GeneralVertex();
             }
 
             if (GUILayout.Button("选中所有顶点"))
@@ -311,7 +348,7 @@ public class TCameraEdtorWindow : EditorWindow
         {
             GUI.color = vertexEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
             string buttonStr = vertexEditorMode? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
-            if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,框选只会选择到<顶点>,而且激活顶点合并快捷键<Ctrl +X>")))
+            if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,框选只会选择到<顶点>,而且激活生成顶点快捷键<Ctrl + Q> 和顶 点合并快捷键<Ctrl + X>")))
             {
                 vertexEditorMode = !vertexEditorMode;
             }
@@ -349,7 +386,34 @@ public class TCameraEdtorWindow : EditorWindow
                 WWW www = new WWW("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi");
                 Application.OpenURL(www.url);
             }
+            if (GUILayout.Button("创建镜头检测器"))
+            {
+                var objs = GameObject.FindObjectsOfType<SimpleController>();
+                if (objs.Length > 0)
+                {
+                    util.SetIcon(objs[0].gameObject, util.Icon.DiamondPurple);
+                    EditorUtility.DisplayDialog("提醒", "场景中已经存在镜头检测器了，帮你标成圆形紫色了", "知道了");
+                    return;
+                }
 
+                var checker = new GameObject("Checker",new Type[] { typeof(SimpleController)});
+                Undo.RecordObject(checker, "General Checker");
+                util.SetIcon(checker, util.Icon.DiamondPurple);
+
+
+                TCameraMesh mesh;
+                if (util.TryGetCameraMesh(out mesh))
+                {
+                    checker.transform.SetParent(mesh.transform, false) ;
+                    checker.transform.position = Vector3.zero;
+                    //如果有顶点，放到第一个顶点那里去
+                    var vertices = mesh.GetAllVertices();
+                    if (vertices.Count > 0 && vertices[0]!= null)
+                    {
+                        checker.transform.position = vertices[0].transform.position;
+                    }
+                }
+            }
             if (GUILayout.Button("选择网格对象"))
             {
                 var objs = GameObject.FindObjectsOfType<TCameraMesh>();
@@ -412,10 +476,7 @@ public class TCameraEdtorWindow : EditorWindow
             }
 
 #if TYOU_LAB
-            if (GUILayout.Button("Init"))
-            {
-                Init();
-            }
+
 #endif
         }
         EditorGUILayout.EndFadeGroup();

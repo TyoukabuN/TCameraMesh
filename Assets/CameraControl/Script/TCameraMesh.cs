@@ -45,9 +45,17 @@ namespace TCam
             }
             get { return m_PerformanceOptimizationOn; }
         }
+#if !TYOU_LAB
+        [HideInInspector]
+#endif
         public float ValidRadius = 2.0f;
+#if !TYOU_LAB
+        [HideInInspector]
+#endif
         public List<TCameraTrangle> TCameraTrangles = new List<TCameraTrangle>();
-
+#if !TYOU_LAB
+        [HideInInspector]
+#endif
         public Transform Target;
         /// <summary>
         /// will pass an eularAngle
@@ -146,9 +154,13 @@ namespace TCam
                             tri.camVertices[1].EularAngle * weight[1] +
                             tri.camVertices[2].EularAngle * weight[2];
 
+                        var pivotPosition = tri.camVertices[0].PivotPosition * weight[0] +
+                            tri.camVertices[1].PivotPosition * weight[1] +
+                            tri.camVertices[2].PivotPosition * weight[2];
+
                         if (OnPositionChanged != null)
                         { 
-                            OnPositionChanged.Invoke(eulerAngles);
+                            OnPositionChanged.Invoke(eulerAngles, pivotPosition);
                         }
                     }
                 }
@@ -182,9 +194,9 @@ namespace TCam
                 if (tri == null)
                     break;
 
-                for (int j = 0; i < tri.camVertices.Length; i++)
+                for (int j = 0; j < tri.camVertices.Length; j++)
                 {
-                    var ver = tri.camVertices[i];
+                    var ver = tri.camVertices[j];
 
                     if (ver == null)
                         break;
@@ -248,6 +260,6 @@ namespace TCam
             }
         }
 
-        public class CameraMeshEvent : UnityEvent<Vector3> { }
+        public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
     }
 }

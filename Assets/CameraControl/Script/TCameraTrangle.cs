@@ -8,6 +8,9 @@ namespace TCam
     {
         public bool PowerOn = true;
 
+#if !TYOU_LAB
+        [HideInInspector]
+#endif
         [SerializeField]
         public TCameraVertex[] camVertices;
 
