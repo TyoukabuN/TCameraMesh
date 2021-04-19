@@ -68,7 +68,7 @@ namespace TCam
             private set { m_CurrentTrangle = value; }
         }
         /// <summary>
-        /// will pass an eularAngle
+        /// will pass some args of tCameraVertex
         /// </summary>
         public CameraMeshEvent OnPositionChanged;
 
@@ -155,6 +155,8 @@ namespace TCam
                     var pivotPosition = tri.camVertices[0].PivotPosition * weight[0] +
                         tri.camVertices[1].PivotPosition * weight[1] +
                         tri.camVertices[2].PivotPosition * weight[2];
+
+                    //Add Other args
 
                     if (OnPositionChanged != null)
                     {
