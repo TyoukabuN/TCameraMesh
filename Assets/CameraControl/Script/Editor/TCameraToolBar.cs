@@ -43,7 +43,7 @@ public class TCameraToolBar : Editor
 
         SelectedTool = GUILayout.SelectionGrid(
             SelectedTool,
-            new string[] { "顶点", "三角形", "网格" },
+            new string[] { "顶点预设", "三角形预设", "网格预设" },
             3,
             EditorStyles.toolbarButton,
             GUILayout.Width(300)

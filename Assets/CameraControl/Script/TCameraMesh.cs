@@ -6,10 +6,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Profiling;
 
 namespace TCam
 {
     [ExecuteAlways]
+
     public class TCameraMesh : MonoBehaviour
     {
         [HideInInspector]
@@ -57,6 +59,14 @@ namespace TCam
         [HideInInspector]
 #endif
         public Transform Target;
+#if TYOU_LAB
+        [SerializeField]
+#endif
+        private TCameraTrangle m_CurrentTrangle;
+        public TCameraTrangle CurrentTrangle {
+            get { return m_CurrentTrangle; }
+            private set { m_CurrentTrangle = value; }
+        }
         /// <summary>
         /// will pass an eularAngle
         /// </summary>
@@ -114,57 +124,94 @@ namespace TCam
             }
         }
 
+        private bool IsTrangleValid(TCameraTrangle tri)
+        {
+            if (tri == null)
+                return false;
+
+            if (!tri.PowerOn)
+                return false;
+
+            if (!tri.Valid())
+                return false;
+
+            return true;
+        }
+
+        private bool TrangleCheckAndProcess(TCameraTrangle tri)
+        {
+            var vertices = tri.Vertices.ToArray();
+
+            float[] weight;
+            if (TCameraUtility.IsInsideTrangle(vertices, Target.position, out weight))
+            {
+                if (PowerOn)
+                {
+                    vertices = tri.Vertices.ToArray();
+                    var eulerAngles = tri.camVertices[0].EularAngle * weight[0] +
+                        tri.camVertices[1].EularAngle * weight[1] +
+                        tri.camVertices[2].EularAngle * weight[2];
+
+                    var pivotPosition = tri.camVertices[0].PivotPosition * weight[0] +
+                        tri.camVertices[1].PivotPosition * weight[1] +
+                        tri.camVertices[2].PivotPosition * weight[2];
+
+                    if (OnPositionChanged != null)
+                    {
+                        OnPositionChanged.Invoke(eulerAngles, pivotPosition);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+
         void Update()
         {
+            Profiler.BeginSample("TCamreraMesh");
+
             if (TCameraTrangles.Count < 1)
+            {
+                Profiler.EndSample();
                 return;
+            }
 
             CleanUp();
 
             if (Target == null)
+            { 
+                Profiler.EndSample();
                 return;
+            }
 
             if (PerformanceOptimizationOn)
             {
                 PerformanceOptimizationSetup();
             }
 
+            if (CurrentTrangle != null)
+            {
+                if (IsTrangleValid(CurrentTrangle) && TrangleCheckAndProcess(CurrentTrangle))
+                { 
+                    Profiler.EndSample();
+                    return;
+                }
+            }
+
+            CurrentTrangle = null;
+
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
                 var tri = TCameraTrangles[i];
 
-                if (tri == null)
-                    break;
-
-                if (!tri.PowerOn)
-                    break;
-
-                if (!tri.Valid())
-                    break;
-
-                var vertices = tri.Vertices.ToArray(); 
-
-                float[] weight;
-                if (TCameraUtility.IsInsideTrangle(vertices, Target.position,out weight))
+                if (IsTrangleValid(tri) && TrangleCheckAndProcess(tri))
                 {
-                    if (PowerOn)
-                    {
-                        vertices = tri.Vertices.ToArray();
-                        var eulerAngles = tri.camVertices[0].EularAngle * weight[0] +
-                            tri.camVertices[1].EularAngle * weight[1] +
-                            tri.camVertices[2].EularAngle * weight[2];
-
-                        var pivotPosition = tri.camVertices[0].PivotPosition * weight[0] +
-                            tri.camVertices[1].PivotPosition * weight[1] +
-                            tri.camVertices[2].PivotPosition * weight[2];
-
-                        if (OnPositionChanged != null)
-                        { 
-                            OnPositionChanged.Invoke(eulerAngles, pivotPosition);
-                        }
-                    }
+                    CurrentTrangle = tri;
+                    break;
                 }
             }
+            Profiler.EndSample();
         }
 
         private void PerformanceOptimizationSetup()
