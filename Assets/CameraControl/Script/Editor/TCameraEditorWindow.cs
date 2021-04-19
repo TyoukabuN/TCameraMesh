@@ -39,6 +39,7 @@ public class TCameraEditorWindow : EditorWindow
     public static AnimBool animBool_editor;
     public static AnimBool animBool_other;
 
+    public static bool FixedCheckerPositionToMeshSurface = true;
     void OnEnable()
     {
         animBool_vertex = new AnimBool(false);
@@ -386,6 +387,8 @@ public class TCameraEditorWindow : EditorWindow
                 WWW www = new WWW("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi");
                 Application.OpenURL(www.url);
             }
+
+            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
             if (GUILayout.Button("创建镜头检测器"))
             {
                 var objs = GameObject.FindObjectsOfType<SimpleController>();
@@ -415,6 +418,17 @@ public class TCameraEditorWindow : EditorWindow
                     }
                 }
             }
+
+            FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface,GUILayout.MaxWidth(86));
+            if (SimpleController.current != null)
+            {
+                SimpleController.current.FixedPositionToMeshsSurface = FixedCheckerPositionToMeshSurface;
+            }
+
+
+            EditorGUILayout.EndHorizontal();
+
+
             if (GUILayout.Button("选择网格对象"))
             {
                 var objs = GameObject.FindObjectsOfType<TCameraMesh>();

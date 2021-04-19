@@ -4,6 +4,8 @@ using UnityEngine;
 using TCam;
 public class SimpleController : MonoBehaviour
 {
+    public static SimpleController current;
+
     public Camera Camera;
     public Transform AxiY;
     public Transform AxiX;
@@ -11,14 +13,29 @@ public class SimpleController : MonoBehaviour
     private string HorizontalAxi = "Horizontal";
     private string VerticalAxi = "Vertical";
     public float Speed = 0.4f;
+
+    private bool m_FixedPositionToMeshsSurface = true;
+    public bool FixedPositionToMeshsSurface
+    {
+        get {
+            return m_FixedPositionToMeshsSurface;
+        }
+        set {
+            m_FixedPositionToMeshsSurface = value;
+        }
+    }
     void Start()
     {
+        current = this;
+
         TCameraMesh mesh;
         if (TCam.TCameraUtility.TryGetCameraMesh(out mesh))
         {
             mesh.SetTarget(transform);
-            mesh.OnPositionChanged.RemoveListener(OnPositionChanged);
-            mesh.OnPositionChanged.AddListener(OnPositionChanged);
+            //mesh.OnPositionChanged.RemoveListener(OnPositionChanged);
+            //mesh.OnPositionChanged.AddListener(OnPositionChanged);
+            mesh.OnComplexEvent.RemoveListener(OnComplexEvent);
+            mesh.OnComplexEvent.AddListener(OnComplexEvent);
         }
 
         if (AxiY == null)
@@ -42,7 +59,7 @@ public class SimpleController : MonoBehaviour
             Camera = Camera.main;
             if (Camera == null)
             {
-                var gobj = new GameObject("tempCam");
+                var gobj = new GameObject("tempCamera");
                 var camera = gobj.AddComponent<Camera>();
                 Camera = camera;
             }
@@ -63,6 +80,23 @@ public class SimpleController : MonoBehaviour
         Camera.transform.localPosition = new Vector3(0, 0, -cameraEular.z);
     }
 
+    void OnComplexEvent(Vector3 cameraEular, Vector3 pivotPosition, float[] weight)
+    {
+        OnPositionChanged(cameraEular, pivotPosition);
+
+        if (FixedPositionToMeshsSurface)
+        { 
+            TCameraMesh mesh;
+            if (TCam.TCameraUtility.TryGetCameraMesh(out mesh))
+            {
+                var tri = mesh.CurrentTrangle;
+                transform.position = tri.camVertices[0].transform.position * weight[0] +
+                    tri.camVertices[1].transform.position * weight[1] +
+                    tri.camVertices[2].transform.position * weight[2];
+            }
+        }
+    }
+
     void Update()
     {
         var h = Input.GetAxis(HorizontalAxi);
@@ -70,20 +104,4 @@ public class SimpleController : MonoBehaviour
 
         transform.Translate(-Vector3.forward * v * Speed + -Vector3.right * h * Speed);
     }
-
-    public void ApplyInput(float moveInput)
-    {
-        Move(moveInput);
-        //Ture(input);
-    }
-
-    public void Move(float input)
-    {
-    }
-
-    public void Ture(float input)
-    {
-    }
-
-
 }

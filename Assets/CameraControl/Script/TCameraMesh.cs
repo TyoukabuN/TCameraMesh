@@ -71,6 +71,10 @@ namespace TCam
         /// will pass some args of tCameraVertex
         /// </summary>
         public CameraMeshEvent OnPositionChanged;
+        /// <summary>
+        /// will pass some args of tCameraVertex
+        /// </summary>
+        public CameraMeshComplexEvent OnComplexEvent;
 
         public void Awake()
         {
@@ -81,6 +85,10 @@ namespace TCam
             if (OnPositionChanged == null)
             {
                 OnPositionChanged = new CameraMeshEvent();
+            }
+            if (OnComplexEvent == null)
+            {
+                OnComplexEvent = new CameraMeshComplexEvent();
             }
         }
         public bool AddTrangle(TCameraTrangle trangle) 
@@ -161,6 +169,10 @@ namespace TCam
                     if (OnPositionChanged != null)
                     {
                         OnPositionChanged.Invoke(eulerAngles, pivotPosition);
+                    }
+                    if (OnComplexEvent != null)
+                    {
+                        OnComplexEvent.Invoke(eulerAngles, pivotPosition, weight);
                     }
                 }
                 return true;
@@ -310,5 +322,7 @@ namespace TCam
         }
 
         public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
+
+        public class CameraMeshComplexEvent : UnityEvent<Vector3, Vector3, float[]> { }
     }
 }
