@@ -72,7 +72,7 @@ namespace TCam
         /// </summary>
         public CameraMeshEvent OnPositionChanged;
         /// <summary>
-        /// will pass some args of tCameraVertex
+        /// will pass some args of tCameraVertex also include barycentric coodinate weight
         /// </summary>
         public CameraMeshComplexEvent OnComplexEvent;
 
