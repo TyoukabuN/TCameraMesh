@@ -13,7 +13,9 @@ public class SimpleController : MonoBehaviour
     private string HorizontalAxi = "Horizontal";
     private string VerticalAxi = "Vertical";
     public float Speed = 0.4f;
-
+#if TYOU_LAB
+    [SerializeField]
+#endif
     private bool m_FixedPositionToMeshsSurface = true;
     public bool FixedPositionToMeshsSurface
     {
