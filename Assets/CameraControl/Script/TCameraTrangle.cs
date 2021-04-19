@@ -75,49 +75,6 @@ namespace TCam
             }
         }
 
-        //void OnDrawGizmos()
-        //{
-        //    var tCameraMesh = GameObject.FindObjectOfType<TCameraMesh>();
-        //    if (tCameraMesh == null)
-        //        return;
-
-        //    if (Vertices.Count < 3)
-        //        return;
-
-        //    Mesh mesh = new Mesh();
-        //    mesh.vertices = Vertices.ToArray();
-        //    mesh.triangles = new int[] { 0, 1, 2 };
-        //    mesh.RecalculateNormals();
-        //    mesh.RecalculateBounds();
-
-        //    Gizmos.color = Color.red;
-
-
-        //    if (tCameraMesh.Target != null)
-        //    {
-        //        if (TCameraUtility.IsInsideTrangleS(mesh.vertices, tCameraMesh.Target.position))
-        //        {
-        //            Gizmos.color = Color.green;
-        //        }
-        //    }
-        //    Gizmos.DrawMesh(mesh);
-
-        //    Gizmos.color = Color.white;
-
-        //    if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D11 ||
-        //        SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D12)
-        //    {
-        //        Gizmos.DrawWireMesh(mesh);
-        //    }
-        //    else
-        //    {
-        //        Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[1]);
-        //        Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[2]);
-        //        Gizmos.DrawLine(mesh.vertices[1], mesh.vertices[2]);
-        //    }
-        //}
-
-
         private void OnValidate()
         {
             RefreshVertices();
