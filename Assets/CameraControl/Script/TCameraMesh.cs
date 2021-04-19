@@ -216,7 +216,7 @@ namespace TCam
 
         private void PerformanceOptimizationSetup()
         {
-
+            //TODO
         }
 
         public bool TryGetTranglesByVertex(TCameraVertex vertex, out TCameraTrangle[] trangles)
