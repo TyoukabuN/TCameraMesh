@@ -193,13 +193,13 @@ namespace TCam
             if (CurrentTrangle != null)
             {
                 if (IsTrangleValid(CurrentTrangle) && TrangleCheckAndProcess(CurrentTrangle))
-                { 
+                {
                     Profiler.EndSample();
                     return;
                 }
-            }
 
-            CurrentTrangle = null;
+                CurrentTrangle = null;
+            }
 
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
