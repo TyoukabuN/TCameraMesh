@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace TCam
 {
+    [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TCameraTrangle : MonoBehaviour
     {
         public bool PowerOn = true;

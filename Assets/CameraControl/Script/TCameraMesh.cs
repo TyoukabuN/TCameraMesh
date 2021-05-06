@@ -10,10 +10,16 @@ using UnityEngine.Profiling;
 
 namespace TCam
 {
+#if UNITY_EDITOR
     [ExecuteAlways]
-
+#endif
+    [DisallowMultipleComponent]
+    [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TCameraMesh : MonoBehaviour
     {
+        /// <summary>
+        /// current Active TCameraMesh
+        /// </summary>
         [HideInInspector]
         public static TCameraMesh currentTCameraMesh;
         [HideInInspector]
@@ -269,6 +275,8 @@ namespace TCam
             return vertices;
         }
 
+#if UNITY_EDITOR
+        private Dictionary<TCameraTrangle, Mesh> tempMesh = new Dictionary<TCameraTrangle, Mesh>();
         void OnDrawGizmos()
         {
             if (!GizmosOn)
@@ -287,7 +295,17 @@ namespace TCam
                 if (tri.Vertices.Count < 3)
                     break;
 
-                Mesh mesh = new Mesh();
+                if (tempMesh == null)
+                {
+                    tempMesh = new Dictionary<TCameraTrangle, Mesh>();
+                }
+
+                Mesh mesh = null;
+                if (!tempMesh.ContainsKey(tri))
+                {
+                    tempMesh[tri] = new Mesh();
+                }
+                mesh = tempMesh[tri];
                 mesh.vertices = tri.Vertices.ToArray();
                 mesh.triangles = new int[] { 0, 1, 2 };
                 mesh.RecalculateNormals();
@@ -320,7 +338,7 @@ namespace TCam
 
             }
         }
-
+#endif
         public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
 
         public class CameraMeshComplexEvent : UnityEvent<Vector3, Vector3, float[]> { }
