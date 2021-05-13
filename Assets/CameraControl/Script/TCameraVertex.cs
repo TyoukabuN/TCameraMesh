@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace TCam
 {
+    [TSaveDuringPlay]
     [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TCameraVertex : MonoBehaviour
     {

@@ -310,6 +310,8 @@ public class TCameraEditorWindow : EditorWindow
                     return;
                 }
 
+                UnityEditor.Undo.RecordObject(tCamearMesh, "Add Trangle");
+
                 for (int i = 0; i < tCameraTrangles.Count; i++)
                 {
                     var trangle = tCameraTrangles[i];
@@ -317,10 +319,7 @@ public class TCameraEditorWindow : EditorWindow
                     {
                         continue;
                     }
-                    GameObject.DestroyImmediate(trangle);
                 }
-
-
             }
 
             if (GUILayout.Button("选中所有三角形"))

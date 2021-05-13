@@ -95,21 +95,24 @@ namespace TCam
                 name = string.Format("CTrangle ({0})", tCameraTrangle.Length);
             }
 
-            var gobj = new GameObject(name);
 
-            trangle = gobj.AddComponent<TCameraTrangle>();
+            var gobj = new GameObject(name,typeof(TCameraTrangle));
+            UnityEditor.Undo.RegisterCreatedObjectUndo(gobj, "New Trangle");
+
+            trangle = gobj.GetComponent<TCameraTrangle>();
             trangle.camVertices = positiveOrder;
 
             gobj.transform.SetParent(tCamearMesh.transform, false);
             trangle.MoveToCentroid();
 
-            UnityEditor.Undo.RegisterCreatedObjectUndo(tCamearMesh, "New Trangle");
+
+            UnityEditor.Undo.RecordObject(tCamearMesh, "Add Trangle");
+
             if (!tCamearMesh.AddTrangle(trangle))
             {
                 GameObject.DestroyImmediate(trangle);
                 return false;
             }
-
             return true;
         }
 
