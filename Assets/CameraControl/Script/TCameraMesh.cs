@@ -17,9 +17,6 @@ namespace TCam
     [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TCameraMesh : MonoBehaviour
     {
-        /// <summary>
-        /// current Active TCameraMesh
-        /// </summary>
         [HideInInspector]
         public static TCameraMesh currentTCameraMesh;
         [HideInInspector]
@@ -77,8 +74,9 @@ namespace TCam
         /// will pass some args of tCameraVertex
         /// </summary>
         public CameraMeshEvent OnPositionChanged;
+        public CameraMeshEventWithSplitArgs OnPositionChangedWithSplitArgs;
         /// <summary>
-        /// will pass some args of tCameraVertex also include barycentric coodinate weight
+        /// will pass some args of tCameraVertex
         /// </summary>
         public CameraMeshComplexEvent OnComplexEvent;
 
@@ -91,6 +89,10 @@ namespace TCam
             if (OnPositionChanged == null)
             {
                 OnPositionChanged = new CameraMeshEvent();
+            }
+            if (OnPositionChangedWithSplitArgs == null)
+            {
+                OnPositionChangedWithSplitArgs = new CameraMeshEventWithSplitArgs();
             }
             if (OnComplexEvent == null)
             {
@@ -175,6 +177,10 @@ namespace TCam
                     if (OnPositionChanged != null)
                     {
                         OnPositionChanged.Invoke(eulerAngles, pivotPosition);
+                    }
+                    if (OnPositionChangedWithSplitArgs != null)
+                    {
+                        OnPositionChangedWithSplitArgs.Invoke(eulerAngles.x, eulerAngles.y, eulerAngles.z);
                     }
                     if (OnComplexEvent != null)
                     {
@@ -276,7 +282,7 @@ namespace TCam
         }
 
 #if UNITY_EDITOR
-        private Dictionary<TCameraTrangle, Mesh> tempMesh = new Dictionary<TCameraTrangle, Mesh>();
+        private Dictionary<TCameraTrangle,Mesh> tempMesh = new Dictionary<TCameraTrangle, Mesh>();
         void OnDrawGizmos()
         {
             if (!GizmosOn)
@@ -295,8 +301,7 @@ namespace TCam
                 if (tri.Vertices.Count < 3)
                     break;
 
-                if (tempMesh == null)
-                {
+                if (tempMesh == null) {
                     tempMesh = new Dictionary<TCameraTrangle, Mesh>();
                 }
 
@@ -339,8 +344,9 @@ namespace TCam
             }
         }
 #endif
-        public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
 
+        public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
+        public class CameraMeshEventWithSplitArgs : UnityEvent<float, float, float> { }
         public class CameraMeshComplexEvent : UnityEvent<Vector3, Vector3, float[]> { }
     }
 }

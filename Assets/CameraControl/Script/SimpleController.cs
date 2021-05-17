@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TCam;
+using System;
 
 
 namespace TCam
@@ -97,10 +98,21 @@ namespace TCam
                 TCameraMesh mesh;
                 if (TCam.TCameraUtility.TryGetCameraMesh(out mesh))
                 {
-                    var tri = mesh.CurrentTrangle;
-                    transform.position = tri.camVertices[0].transform.position * weight[0] +
-                        tri.camVertices[1].transform.position * weight[1] +
-                        tri.camVertices[2].transform.position * weight[2];
+                    try
+                    {
+                        if (mesh.CurrentTrangle == null)
+                            return;
+
+                        var tri = mesh.CurrentTrangle;
+                        transform.position = tri.camVertices[0].transform.position * weight[0] +
+                            tri.camVertices[1].transform.position * weight[1] +
+                            tri.camVertices[2].transform.position * weight[2];
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log(123);
+                    }
+                    
                 }
             }
         }
