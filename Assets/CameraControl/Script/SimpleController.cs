@@ -7,6 +7,9 @@ using System;
 
 namespace TCam
 {
+#if TYOU_LAB
+    [ExecuteAlways]
+#endif
     public class SimpleController : MonoBehaviour
     {
         public static SimpleController current;
@@ -33,7 +36,7 @@ namespace TCam
                 m_FixedPositionToMeshsSurface = value;
             }
         }
-        void Start()
+        void OnEnable()
         {
             current = this;
 
@@ -43,6 +46,10 @@ namespace TCam
                 mesh.SetTarget(transform);
                 //mesh.OnPositionChanged.RemoveListener(OnPositionChanged);
                 //mesh.OnPositionChanged.AddListener(OnPositionChanged);
+                if (mesh.OnComplexEvent == null)
+                {
+                    mesh.OnComplexEvent = new TCameraMesh.CameraMeshComplexEvent();
+                }
                 mesh.OnComplexEvent.RemoveListener(OnComplexEvent);
                 mesh.OnComplexEvent.AddListener(OnComplexEvent);
             }
