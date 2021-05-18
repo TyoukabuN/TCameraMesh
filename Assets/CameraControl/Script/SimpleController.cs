@@ -123,14 +123,29 @@ namespace TCam
                 }
             }
         }
-
+#if UNITY_EDITOR
         void Update()
         {
+            var sceneView = UnityEditor.SceneView.currentDrawingSceneView;
+            if (sceneView == null)
+            {
+                sceneView = UnityEditor.SceneView.lastActiveSceneView;
+            }
+            Camera sceneCam = sceneView.camera;
+
             var h = Input.GetAxis(HorizontalAxi);
             var v = Input.GetAxis(VerticalAxi);
 
-            transform.Translate(-Vector3.forward * v * Speed + -Vector3.right * h * Speed);
+            var forward = new Vector3(sceneCam.transform.forward.x,0, sceneCam.transform.forward.z);
+            forward.Normalize();
+
+            var right = new Vector3(sceneCam.transform.right.x, 0, sceneCam.transform.right.z);
+            right.Normalize();
+            
+
+            transform.Translate(forward * v * Speed + right * h * Speed);
         }
+#endif
     }
 
 }
