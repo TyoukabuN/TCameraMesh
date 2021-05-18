@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 
 namespace TCam
 {
-#if UNITY_EDITOR
+#if TYOU_LAB
     [ExecuteAlways]
 #endif
     [DisallowMultipleComponent]
