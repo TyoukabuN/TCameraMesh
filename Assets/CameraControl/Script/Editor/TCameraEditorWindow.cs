@@ -145,8 +145,7 @@ public class TCameraEditorWindow : EditorWindow
                 else if (vertexEditorMode)
                 {
                 }
-                else if (trangleEditorMode)
-                {
+                else if (trangleEditorMode) {
                     Selection.activeObject = null;
                 }
             }
@@ -253,7 +252,7 @@ public class TCameraEditorWindow : EditorWindow
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         animBool_vertex.target = EditorGUILayout.BeginToggleGroup("顶点相关", animBool_vertex.target);
         if (EditorGUILayout.BeginFadeGroup(animBool_vertex.faded))
-        {
+        { 
             if (GUILayout.Button(new GUIContent("生成Camera顶点", "<顶点>编辑模式下,激活快捷键<Ctrl + Q>")))
             {
                 GeneralVertex();
@@ -264,7 +263,7 @@ public class TCameraEditorWindow : EditorWindow
                 var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
 
                 var gobjs = new List<Object>();
-                for (int i = 0; i < tCameraVertexs.Length; i++)
+                for(int i=0;i<tCameraVertexs.Length;i++)
                 {
                     gobjs.Add(tCameraVertexs[i].gameObject);
                 }
@@ -352,14 +351,14 @@ public class TCameraEditorWindow : EditorWindow
         if (EditorGUILayout.BeginFadeGroup(animBool_editor.faded))
         {
             GUI.color = vertexEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
-            string buttonStr = vertexEditorMode ? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
+            string buttonStr = vertexEditorMode? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
             if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,框选只会选择到<顶点>,而且激活生成顶点快捷键<Ctrl + Q> 和顶 点合并快捷键<Ctrl + X>")))
             {
                 vertexEditorMode = !vertexEditorMode;
             }
             GUI.color = Color.white;
 
-            GUI.color = trangleEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
+            GUI.color = trangleEditorMode? new Color(0f, 0.95f, 0.95f, 1f):Color.white;
             buttonStr = trangleEditorMode ? "关闭<三角形>编辑模式" : "开启<三角形>编辑模式";
             if (GUILayout.Button(new GUIContent(buttonStr, "开启后只会框选到<三角形>")))
             {
@@ -370,7 +369,7 @@ public class TCameraEditorWindow : EditorWindow
         EditorGUILayout.EndFadeGroup();
         EditorGUILayout.EndToggleGroup();
         EditorGUILayout.EndVertical();
-
+        
 
         if (GUILayout.Button(new GUIContent("合并顶点成三角形", "<顶点>编辑模式下,激活快捷键<Ctrl +X>")))
         {
@@ -403,7 +402,7 @@ public class TCameraEditorWindow : EditorWindow
                     return;
                 }
 
-                var checker = new GameObject("Checker", new Type[] { typeof(SimpleController) });
+                var checker = new GameObject("Checker",new Type[] { typeof(SimpleController)});
                 Undo.RegisterCreatedObjectUndo(checker, "General Checker");
                 util.SetIcon(checker, util.Icon.CirclePurple);
 
@@ -412,18 +411,18 @@ public class TCameraEditorWindow : EditorWindow
                 if (util.TryGetCameraMesh(out mesh))
                 {
                     mesh.SetTarget(checker.transform);
-                    checker.transform.SetParent(mesh.transform, false);
+                    checker.transform.SetParent(mesh.transform, false) ;
                     checker.transform.position = Vector3.zero;
                     //如果有顶点，放到第一个顶点那里去
                     var vertices = mesh.GetAllVertices();
-                    if (vertices.Count > 0 && vertices[0] != null)
+                    if (vertices.Count > 0 && vertices[0]!= null)
                     {
                         checker.transform.position = vertices[0].transform.position;
                     }
                 }
             }
 
-            FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface, GUILayout.MaxWidth(86));
+            FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface,GUILayout.MaxWidth(86));
             if (SimpleController.current != null)
             {
                 SimpleController.current.FixedPositionToMeshsSurface = FixedCheckerPositionToMeshSurface;
