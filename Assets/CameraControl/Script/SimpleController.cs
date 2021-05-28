@@ -7,9 +7,7 @@ using System;
 
 namespace TCam
 {
-#if TYOU_LAB
     [ExecuteAlways]
-#endif
     public class SimpleController : MonoBehaviour
     {
         public static SimpleController current;
