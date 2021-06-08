@@ -51,7 +51,7 @@ public class TCameraEditorWindow : EditorWindow
         animBool_trangle.valueChanged.AddListener(Repaint);
         animBool_editor = new AnimBool(true);
         animBool_editor.valueChanged.AddListener(Repaint);
-        animBool_storyCamera = new AnimBool(true);
+        animBool_storyCamera = new AnimBool(false);
         animBool_storyCamera.valueChanged.AddListener(Repaint);
         animBool_other = new AnimBool(true);
         animBool_other.valueChanged.AddListener(Repaint);
@@ -148,8 +148,7 @@ public class TCameraEditorWindow : EditorWindow
                 else if (vertexEditorMode)
                 {
                 }
-                else if (trangleEditorMode)
-                {
+                else if (trangleEditorMode) {
                     Selection.activeObject = null;
                 }
             }
@@ -252,7 +251,7 @@ public class TCameraEditorWindow : EditorWindow
         scroll_value = EditorGUILayout.BeginScrollView(scroll_value);
 
         EditorGUILayout.BeginVertical();
-        {
+        { 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             animBool_vertex.target = EditorGUILayout.BeginToggleGroup("顶点相关", animBool_vertex.target);
             if (EditorGUILayout.BeginFadeGroup(animBool_vertex.faded))
@@ -352,20 +351,20 @@ public class TCameraEditorWindow : EditorWindow
 
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        {
+        { 
             animBool_editor.target = EditorGUILayout.BeginToggleGroup("编辑模式", animBool_editor.target);
 
             if (EditorGUILayout.BeginFadeGroup(animBool_editor.faded))
             {
                 GUI.color = vertexEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
-                string buttonStr = vertexEditorMode ? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
+                string buttonStr = vertexEditorMode? "关闭<顶点>编辑模式" : "开启<顶点>编辑模式";
                 if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,框选只会选择到<顶点>,而且激活生成顶点快捷键<Ctrl + Q> 和顶 点合并快捷键<Ctrl + X>")))
                 {
                     vertexEditorMode = !vertexEditorMode;
                 }
                 GUI.color = Color.white;
 
-                GUI.color = trangleEditorMode ? new Color(0f, 0.95f, 0.95f, 1f) : Color.white;
+                GUI.color = trangleEditorMode? new Color(0f, 0.95f, 0.95f, 1f):Color.white;
                 buttonStr = trangleEditorMode ? "关闭<三角形>编辑模式" : "开启<三角形>编辑模式";
                 if (GUILayout.Button(new GUIContent(buttonStr, "开启后只会框选到<三角形>")))
                 {
@@ -389,14 +388,14 @@ public class TCameraEditorWindow : EditorWindow
         GUILayout.FlexibleSpace();
 
 
-        //#if TYOU_LAB
+//#if TYOU_LAB
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         {
             animBool_storyCamera.target = EditorGUILayout.BeginToggleGroup("剧情镜头校对", animBool_storyCamera.target);
 
             if (EditorGUILayout.BeginFadeGroup(animBool_storyCamera.faded))
             {
-                storyCamera = EditorGUILayout.ObjectField("剧情镜头", storyCamera, typeof(Camera), true) as Camera;
+                storyCamera = EditorGUILayout.ObjectField("剧情镜头",storyCamera,typeof(Camera),true) as Camera;
                 storyAvatar = EditorGUILayout.ObjectField("剧情Avatar", storyAvatar, typeof(Transform), true) as Transform;
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 {
@@ -432,7 +431,7 @@ public class TCameraEditorWindow : EditorWindow
                         obj.transform.position = storyAvatar.position;
                         AxiY = obj.transform;
                     }
-                    // AxiY.transform.localPosition = Vector3.zero;
+                   // AxiY.transform.localPosition = Vector3.zero;
 
                     if (AxiX == null)
                     {
@@ -473,7 +472,7 @@ public class TCameraEditorWindow : EditorWindow
                         foreach (var vertex in tcamTrangle.camVertices)
                         {
                             if (vertex)
-                            {
+                            { 
                                 vertex.EularAngle = eularAngle;
                                 vertex.PivotPosition = pivotPosition;
                                 isModifyVertex = true;
@@ -490,10 +489,10 @@ public class TCameraEditorWindow : EditorWindow
                     }
 
 
-                    var res = EditorUtility.DisplayDialog("校对结束",
-                        string.Format("avatar世界坐标:{0}\n剧情镜头角度:{1}\n剧情镜头偏移:{2}\n有无修改三角形：{3}\n有无修改顶点：{4}\n",
-                        storyAvatar.transform.position.ToString("f5"), eularAngle.ToString("f5"), pivotPosition.ToString("f5"), isModifyTrangle ? "有" : "无", isModifyVertex ? "有" : "无"),
-                        "ok");
+                    var res =EditorUtility.DisplayDialog("校对结束", 
+                        string.Format("avatar世界坐标:{0}\n剧情镜头角度:{1}\n剧情镜头偏移:{2}\n有无修改三角形：{3}\n有无修改顶点：{4}\n", 
+                        storyAvatar.transform.position.ToString("f5"),eularAngle.ToString("f5"), pivotPosition.ToString("f5"), isModifyTrangle ? "有" : "无", isModifyVertex ? "有" : "无"),
+                        "ok") ;
 
                     if (res)
                     {
@@ -506,7 +505,7 @@ public class TCameraEditorWindow : EditorWindow
             EditorGUILayout.EndToggleGroup();
             EditorGUILayout.EndVertical();
         }
-        //#endif
+//#endif
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         {
@@ -520,7 +519,7 @@ public class TCameraEditorWindow : EditorWindow
                 }
 
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-                {
+                { 
                     if (GUILayout.Button("创建镜头检测器"))
                     {
                         var objs = GameObject.FindObjectsOfType<SimpleController>();
@@ -531,7 +530,7 @@ public class TCameraEditorWindow : EditorWindow
                             return;
                         }
 
-                        var checker = new GameObject("Checker", new Type[] { typeof(SimpleController) });
+                        var checker = new GameObject("Checker",new Type[] { typeof(SimpleController)});
                         Undo.RegisterCreatedObjectUndo(checker, "General Checker");
                         util.SetIcon(checker, util.Icon.CirclePurple);
 
@@ -540,18 +539,18 @@ public class TCameraEditorWindow : EditorWindow
                         if (util.TryGetCameraMesh(out mesh))
                         {
                             mesh.SetTarget(checker.transform);
-                            checker.transform.SetParent(mesh.transform, false);
+                            checker.transform.SetParent(mesh.transform, false) ;
                             checker.transform.position = Vector3.zero;
                             //如果有顶点，放到第一个顶点那里去
                             var vertices = mesh.GetAllVertices();
-                            if (vertices.Count > 0 && vertices[0] != null)
+                            if (vertices.Count > 0 && vertices[0]!= null)
                             {
                                 checker.transform.position = vertices[0].transform.position;
                             }
                         }
                     }
 
-                    FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface, GUILayout.MaxWidth(86));
+                    FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface,GUILayout.MaxWidth(86));
                     if (SimpleController.current != null)
                     {
                         SimpleController.current.FixedPositionToMeshsSurface = FixedCheckerPositionToMeshSurface;
