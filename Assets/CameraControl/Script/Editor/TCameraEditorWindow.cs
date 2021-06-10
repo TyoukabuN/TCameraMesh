@@ -53,9 +53,9 @@ public class TCameraEditorWindow : EditorWindow
         animBool_trangle.valueChanged.AddListener(Repaint);
         animBool_editor = new AnimBool(true);
         animBool_editor.valueChanged.AddListener(Repaint);
-        animBool_storyCamera = new AnimBool(false);
+        animBool_storyCamera = new AnimBool(true);
         animBool_storyCamera.valueChanged.AddListener(Repaint);
-        animBool_other = new AnimBool(true);
+        animBool_other = new AnimBool(false);
         animBool_other.valueChanged.AddListener(Repaint);
     }
 
@@ -391,8 +391,7 @@ public class TCameraEditorWindow : EditorWindow
         EditorGUILayout.EndVertical();
         GUILayout.FlexibleSpace();
 
-
-//#if TYOU_LAB
+        //剧情镜头校对
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         {
             animBool_storyCamera.target = EditorGUILayout.BeginToggleGroup("剧情镜头校对", animBool_storyCamera.target);
@@ -401,13 +400,16 @@ public class TCameraEditorWindow : EditorWindow
             {
                 storyCamera = EditorGUILayout.ObjectField("剧情镜头",storyCamera,typeof(Camera),true) as Camera;
                 storyAvatar = EditorGUILayout.ObjectField("剧情Avatar", storyAvatar, typeof(Transform), true) as Transform;
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                {
-                    tcamTrangle = EditorGUILayout.ObjectField("三角形", tcamTrangle, typeof(TCameraTrangle), true) as TCameraTrangle;
-                    tcamVertex = EditorGUILayout.ObjectField("顶点", tcamVertex, typeof(TCameraVertex), true) as TCameraVertex;
+                //EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                //{
+                    //tcamTrangle = EditorGUILayout.ObjectField("三角形", tcamTrangle, typeof(TCameraTrangle), true) as TCameraTrangle;
+                    //tcamVertex = EditorGUILayout.ObjectField("顶点", tcamVertex, typeof(TCameraVertex), true) as TCameraVertex;
+
+                    DrawList<TCameraVertex>("顶点",tcamVertex, tcamVertices);
+                    DrawList<TCameraTrangle>("三角形",tcamTrangle, tcamTrangles);
                     //sign = EditorGUILayout.Vector2Field("符号<Sign>", sign);
-                    EditorGUILayout.EndVertical();
-                }
+                    //EditorGUILayout.EndVertical();
+                //}
                 if (GUILayout.Button("校对"))
                 {
                     if (!storyCamera)
@@ -471,24 +473,33 @@ public class TCameraEditorWindow : EditorWindow
 
                     bool isModifyTrangle = false;
                     bool isModifyVertex = false;
-                    if (tcamTrangle)
+                    if (tcamTrangles.Count>0)
                     {
-                        foreach (var vertex in tcamTrangle.camVertices)
-                        {
-                            if (vertex)
-                            { 
-                                vertex.EularAngle = eularAngle;
-                                vertex.PivotPosition = pivotPosition;
-                                isModifyVertex = true;
+                        foreach (var trangle in tcamTrangles)
+                        { 
+                            foreach (var vertex in trangle.camVertices)
+                            {
+                                if (vertex)
+                                { 
+                                    vertex.EularAngle = eularAngle;
+                                    vertex.PivotPosition = pivotPosition;
+                                    isModifyVertex = true;
+                                }
                             }
                         }
                         isModifyTrangle = true;
                     }
 
-                    if (tcamVertex)
+                    if (tcamVertices.Count>0)
                     {
-                        tcamVertex.EularAngle = eularAngle;
-                        tcamVertex.PivotPosition = pivotPosition;
+                        foreach (var vertex in tcamVertices)
+                        {
+                            if (vertex)
+                            {
+                                vertex.EularAngle = eularAngle;
+                                vertex.PivotPosition = pivotPosition;
+                            }
+                        }
                         isModifyVertex = true;
                     }
 
@@ -509,8 +520,7 @@ public class TCameraEditorWindow : EditorWindow
             EditorGUILayout.EndToggleGroup();
             EditorGUILayout.EndVertical();
         }
-//#endif
-
+        //其他
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         {
             animBool_other.target = EditorGUILayout.BeginToggleGroup("其他", animBool_other.target);
@@ -643,8 +653,66 @@ public class TCameraEditorWindow : EditorWindow
     private Vector2 sign = Vector2.one;
     private Camera storyCamera = null;
     private Transform storyAvatar = null;
+
     private TCameraVertex tcamVertex = null;
+    public List<TCameraVertex> tcamVertices = new List<TCameraVertex>();
+
     private TCameraTrangle tcamTrangle = null;
+    public List<TCameraTrangle> tcamTrangles = new List<TCameraTrangle>();
+
+
+    static void DrawList<T>(string title, T temp, List<T> list) where T : Component
+    {
+        DrawList<T>(new GUIContent(title), temp, list);
+    }
+    static void DrawList<T>(GUIContent uIContent,T temp,List<T> list) where T : Component
+    {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        {
+            EditorGUILayout.BeginHorizontal();
+            //temp = EditorGUILayout.ObjectField(uIContent, temp, typeof(T), true) as T;
+            //if (temp)
+            //{
+            //    if (!list.Contains(temp))
+            //    {
+            //        list.Add(temp);
+            //        temp = null;
+            //    }
+            //}
+            EditorGUILayout.LabelField(uIContent.text,GUILayout.Width(45));
+            List<T> tempObj = DragAreaGetObject.GetOjbect<T>("(拖到这里来，可以多选)");
+            foreach (var comp in tempObj)
+            {
+                if (!list.Contains(comp))
+                {
+                    list.Add(comp);
+                }
+            }
+
+            if (GUILayout.Button("清理", GUILayout.Width(40)))
+            {
+                list.Clear();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (list.Count > 0)
+            { 
+                for (int i = 0; i < list.Count; i++)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Space(49);
+                    list[i] = EditorGUILayout.ObjectField(list[i], typeof(T), true) as T;
+                    if (GUILayout.Button("删除", GUILayout.Width(40)))
+                    {
+                        list.RemoveAt(i);
+                        i--;
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+            EditorGUILayout.EndVertical();
+        }
+    }
 
     static void OpenDocument()
     {
@@ -736,3 +804,66 @@ public class TCameraEditorWindow : EditorWindow
         }
     }
 }
+
+public class DragAreaGetObject : Editor
+{
+
+    public static List<T> GetOjbect<T>(string meg = null) where T : Component
+    {
+        Event aEvent;
+        aEvent = Event.current;
+        List<T> temps = new List<T>();
+
+        GUI.contentColor = Color.white;
+        UnityEngine.Object temp = null;
+
+        var dragArea = GUILayoutUtility.GetRect(0f, 0f, GUILayout.ExpandHeight(true),GUILayout.ExpandWidth(true));
+
+        GUIContent title = new GUIContent(meg);
+        if (string.IsNullOrEmpty(meg))
+        {
+            title = new GUIContent("拖到这里来");
+        }
+
+        GUI.Box(dragArea, title, EditorStyles.objectField);
+        switch (aEvent.type)
+        {
+            case EventType.DragUpdated:
+            case EventType.DragPerform:
+                if (!dragArea.Contains(aEvent.mousePosition))
+                {
+                    break;
+                }
+
+                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                if (aEvent.type == EventType.DragPerform)
+                {
+                    DragAndDrop.AcceptDrag();
+
+
+
+                    for (int i = 0; i < DragAndDrop.objectReferences.Length; ++i)
+                    {
+                        temp = DragAndDrop.objectReferences[i];
+
+                        if (temp is GameObject)
+                        {
+                            var comp = (temp as GameObject).GetComponent<T>();
+                            if (comp != null)
+                            {
+                                temps.Add(comp);
+                            }
+                        }
+                    }
+                }
+
+                Event.current.Use();
+                break;
+            default:
+                break;
+        }
+
+        return temps;
+    }
+}
+
