@@ -669,10 +669,10 @@ namespace TCam
                         }
                     }
 
-                    if (GUILayout.Button("测试"))
-                    {
-                        Debug.Log(GetScriptStorePath());
-                    }
+                    //if (GUILayout.Button("测试"))
+                    //{
+                    //    Debug.Log(GetScriptStorePath());
+                    //}
                 }
                 EditorGUILayout.EndFadeGroup();
                 EditorGUILayout.EndToggleGroup();
