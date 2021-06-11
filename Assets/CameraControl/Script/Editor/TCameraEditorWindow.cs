@@ -14,7 +14,7 @@ namespace TCam
     {
         static TCameraEditorWindow current;
         
-        [MenuItem("TCam/ToolBar")]
+        [MenuItem("TCam/ToolBar %#T")]
         static void Open()
         {
             EditorWindow.GetWindow<TCameraEditorWindow>().Init();
