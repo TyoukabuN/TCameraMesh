@@ -113,6 +113,7 @@ namespace TCam
                 GameObject.DestroyImmediate(trangle);
                 return false;
             }
+            EditorUtility.SetDirty(tCamearMesh);
             return true;
         }
 
