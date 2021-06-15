@@ -537,7 +537,7 @@ namespace TCam
 
                         if (res)
                         {
-                            DestroyImmediate(Root);
+                            DestroyImmediate(Root.gameObject);
                         }
                     }
 
