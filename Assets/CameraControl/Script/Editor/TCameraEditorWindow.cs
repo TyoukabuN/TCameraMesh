@@ -13,7 +13,7 @@ namespace TCam
     public class TCameraEditorWindow : EditorWindow
     {
         static TCameraEditorWindow current;
-        
+
         [MenuItem("TCam/ToolBar %#T")]
         static void Open()
         {
@@ -47,30 +47,30 @@ namespace TCam
         private void OnUndoRedoPerformed()
         {
             Repaint();
-        }    
+        }
 
         static Vector2 scroll_value = Vector2.zero;
 
         string checkerDisplayKey = "TCameraMesh Checker Display Dialog";
 
-        public static AnimBool animBool_vertex;
-        public static AnimBool animBool_trangle;
-        public static AnimBool animBool_editor;
-        public static AnimBool animBool_storyCamera;
-        public static AnimBool animBool_other;
+        public static AnimBoolHandle animBool_vertex;
+        public static AnimBoolHandle animBool_trangle;
+        public static AnimBoolHandle animBool_editor;
+        public static AnimBoolHandle animBool_storyCamera;
+        public static AnimBoolHandle animBool_other;
 
         public static bool FixedCheckerPositionToMeshSurface = true;
         void OnEnable()
         {
-            animBool_vertex = new AnimBool(false);
+            animBool_vertex = new AnimBoolHandle("TCameraMesh_animBool_vertex", false);
             animBool_vertex.valueChanged.AddListener(Repaint);
-            animBool_trangle = new AnimBool(false);
+            animBool_trangle = new AnimBoolHandle("TCameraMesh_animBool_trangle", false);
             animBool_trangle.valueChanged.AddListener(Repaint);
-            animBool_editor = new AnimBool(true);
+            animBool_editor = new AnimBoolHandle("TCameraMesh_animBool_editor", true);
             animBool_editor.valueChanged.AddListener(Repaint);
-            animBool_storyCamera = new AnimBool(true);
+            animBool_storyCamera = new AnimBoolHandle("TCameraMesh_animBool_storyCamera", true);
             animBool_storyCamera.valueChanged.AddListener(Repaint);
-            animBool_other = new AnimBool(false);
+            animBool_other = new AnimBoolHandle("TCameraMesh_animBool_other", false);
             animBool_other.valueChanged.AddListener(Repaint);
         }
 
@@ -267,14 +267,14 @@ namespace TCam
         void OnGUI()
         {
             if (pTCameraVertex == null)
-            { 
+            {
                 pTCameraVertex = VertexProcesser.Get();
             }
             if (pTCameraTrangle == null)
             {
                 pTCameraTrangle = TrangleProcesser.Get();
             }
-            
+
             scroll_value = EditorGUILayout.BeginScrollView(scroll_value);
             string buttonStr = string.Empty;
 
@@ -560,22 +560,29 @@ namespace TCam
 
                     EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
                     {
-                        if (GUILayout.Button("创建镜头检测器"))
+                        if (GUILayout.Button("创建镜头检测器<Checker>"))
                         {
                             var objs = GameObject.FindObjectsOfType<SimpleController>();
                             int displaySet = EditorPrefs.GetInt(checkerDisplayKey, 0);
-                            if (objs.Length > 0 || displaySet == 2)
+                            if (objs.Length > 0)
                             {
                                 if (objs.Length > 0)
                                 {
                                     util.SetIcon(objs[0].gameObject, util.Icon.CirclePurple);
                                 }
-                                var res = EditorUtility.DisplayDialogComplex("提醒", "场景中已经存在镜头检测器了，帮你标成圆形紫色，并选中它了", "知道了", "关闭", "不再提示");
-                                EditorPrefs.SetInt(checkerDisplayKey, res);
+
+                                if (displaySet != 2)
+                                {
+                                    var res = EditorUtility.DisplayDialogComplex("提醒", "场景中已经存在镜头检测器了，帮你标成圆形紫色，并选中它了", "选中", "关闭", "不再提示");
+                                    Debug.Log(res);
+                                    EditorPrefs.SetInt(checkerDisplayKey, res);
+                                }
+                                Selection.activeGameObject = objs[0].gameObject;
                                 return;
                             }
 
                             var checker = new GameObject("Checker", new Type[] { typeof(SimpleController) });
+                            Selection.activeGameObject = checker;
                             Undo.RegisterCreatedObjectUndo(checker, "General Checker");
                             util.SetIcon(checker, util.Icon.CirclePurple);
 
@@ -704,7 +711,7 @@ namespace TCam
 
         void DrawList<T>(GUIContent uIContent, Processer<T> processer) where T : Component
         {
-            
+
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             {
                 EditorGUILayout.BeginHorizontal();
@@ -714,7 +721,7 @@ namespace TCam
                 {
                     if (!processer.targets.Contains(comp))
                     {
-                        Undo.RecordObject(processer,"TCameraEditorWindow add " + typeof(T).Name);
+                        Undo.RecordObject(processer, "TCameraEditorWindow add " + typeof(T).Name);
                         processer.targets.Add(comp);
                         EditorUtility.SetDirty(processer);
                     }
@@ -862,15 +869,42 @@ namespace TCam
         }
     }
 
-    [CreateAssetMenuAttribute(menuName = "VertexProcesser", fileName= "VertexProcesser")]
-    public class VertexProcesser: Processer<TCameraVertex>
+    public class AnimBoolHandle : AnimBool
+    {
+        private string m_RecordKey = string.Empty;
+        public string RecordKey
+        {
+            get { return m_RecordKey; }
+            private set { m_RecordKey = value; }
+        }
+        public AnimBoolHandle(string recordKey, bool value):base(value)
+        {
+            value = EditorPrefs.GetBool(recordKey, value);
+            target = value;
+            m_RecordKey = recordKey;
+        }
+        public new bool target
+        {
+            get { return base.target; }
+            set {
+                if (value != target)
+                {
+                    EditorPrefs.SetBool(RecordKey, value);
+                }
+                base.target = value;
+            }
+        }
+    }
+
+    //[CreateAssetMenuAttribute(menuName = "VertexProcesser", fileName= "VertexProcesser")]
+    public class VertexProcesser : Processer<TCameraVertex>
     {
         public static VertexProcesser Get()
         {
             return Get<VertexProcesser>();
         }
     }
-    [CreateAssetMenuAttribute(menuName = "TrangleProcesser", fileName = "TrangleProcesser")]
+    //[CreateAssetMenuAttribute(menuName = "TrangleProcesser", fileName = "TrangleProcesser")]
     public class TrangleProcesser : Processer<TCameraTrangle>
     {
         public static TrangleProcesser Get()
@@ -878,18 +912,18 @@ namespace TCam
             return Get<TrangleProcesser>();
         }
     }
-    public abstract class Processer<T>: ScriptableObject where T : Component
+    public abstract class Processer<T> : ScriptableObject where T : Component
     {
         public T template = null;
         public List<T> targets = new List<T>();
         private static string scriptableObjectPath = string.Empty;
 
-        public static T2 Get<T2>() where T2:ScriptableObject
-        { 
+        public static T2 Get<T2>() where T2 : ScriptableObject
+        {
 
             string path = TCameraEditorWindow.FindTCameraRoot();
             if (!AssetDatabase.IsValidFolder(TCameraEditorWindow.GetScriptStorePath()))
-            { 
+            {
                 path = AssetDatabase.CreateFolder(path, "ScriptableObject");
             }
             path = System.IO.Path.Combine(TCameraEditorWindow.GetScriptStorePath(), "{0}.asset");
