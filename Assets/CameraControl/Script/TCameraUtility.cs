@@ -135,6 +135,12 @@ namespace TCam
 
         #region FOR_GIZMOS
 
+        /// <summary>
+        /// use area of trangle to calculate
+        /// </summary>
+        /// <param name="trangle"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public static bool IsInsideTrangleS(Vector3[] trangle, Vector3 point)
         {
             var A = trangle[0];
@@ -169,6 +175,43 @@ namespace TCam
             float t = uCrossW.magnitude / denom;
 
             return (r <= 1 && t <= 1 && r + t <= 1);
+        }
+
+        /// <summary>
+        /// use barycentric technique to calculate
+        /// </summary>
+        /// <param name="trangle"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool IsInsideTrangleS2(Vector3[] trangle,Vector3 point)
+        { 
+            var A = trangle[0];
+            var B = trangle[1];
+            var C = trangle[2];
+            var P = point;
+            A.y = 0;
+            B.y = 0;
+            C.y = 0;
+            P.y = 0;
+            // Compute vectors        
+            var v0 = C - A;
+            var v1 = B - A;
+            var v2 = P - A;
+
+            // Compute dot products
+            var dot00 = Vector3.Dot(v0, v0);
+            var dot01 = Vector3.Dot(v0, v1);
+            var dot02 = Vector3.Dot(v0, v2);
+            var dot11 = Vector3.Dot(v1, v1);
+            var dot12 = Vector3.Dot(v1, v2);
+
+            // Compute barycentric coordinates
+            var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+            var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+            var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+            // Check if point is in triangle
+            return (u >= 0) && (v >= 0) && (u + v < 1);
         }
         #endregion
     }

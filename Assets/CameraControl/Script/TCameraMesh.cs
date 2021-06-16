@@ -319,7 +319,7 @@ namespace TCam
                 Gizmos.color = Color.red;
                 if (Target != null)
                 {
-                    if (TCameraUtility.IsInsideTrangleS(mesh.vertices, Target.position))
+                    if (TCameraUtility.IsInsideTrangleS2(mesh.vertices, Target.position))
                     {
                         Gizmos.color = Color.green;
                     }
