@@ -92,9 +92,6 @@ namespace TMesh
             return false;
         }
 
-
-     
-
         public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
         public class CameraMeshEventWithSplitArgs : UnityEvent<float, float, float> { }
         public class CameraMeshComplexEvent : UnityEvent<Vector3, Vector3, float[]> { }
