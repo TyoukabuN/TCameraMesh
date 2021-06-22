@@ -30,14 +30,14 @@ namespace TMesh
         /// </summary>
         /// <param name="vertices"></param>
         /// <returns>The sign of the result of the shoelace formula</returns>
-        public static bool IsPositiveOrder(TCameraVertex[] vertices)
+        public static bool IsPositiveOrder(TVertex[] vertices)
         {
             return CalOrienttionSign(vertices) < 0;
         }
 
         public static bool IsPositiveOrder(TTrangle tTrangle)
         {
-            return CalOrienttionSign(tTrangle.camVertices) < 0;
+            return CalOrienttionSign(tTrangle.vertices) < 0;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace TMesh
         /// </summary>
         /// <param name="vertices"></param>
         /// <returns>The result of the shoelace formula</returns>
-        public static float CalOrienttionSign(TCameraVertex[] vertices)
+        public static float CalOrienttionSign(TVertex[] vertices)
         {
             float positivePart = 0.0f;
             float negativePart = 0.0f;

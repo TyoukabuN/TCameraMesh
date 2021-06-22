@@ -13,13 +13,13 @@ namespace TMesh
         [HideInInspector]
 #endif
         [SerializeField]
-        public TCameraVertex[] camVertices;
+        public TVertex[] vertices;
 
-        public TCameraVertex this[int index]
+        public TVertex this[int index]
         {
             get 
             { 
-                return camVertices[index]; 
+                return vertices[index]; 
             }
         }
 
@@ -52,9 +52,9 @@ namespace TMesh
             if (Vertices.Count < 3)
                 return false;
 
-            for (int i = 0; i < camVertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
-                if (camVertices[i] == null)
+                if (vertices[i] == null)
                     return false;
             }
 
@@ -62,16 +62,16 @@ namespace TMesh
         }
         protected void RefreshVertices()
         {
-            if (camVertices == null)
+            if (vertices == null)
             {
                 return;
             }
             m_Vertices = new List<Vector3>();
-            for (int i = 0; i < camVertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
-                if (camVertices[i] != null)
+                if (vertices[i] != null)
                 { 
-                    m_Vertices.Add(camVertices[i].transform.position);
+                    m_Vertices.Add(vertices[i].transform.position);
                 }
             }
         }

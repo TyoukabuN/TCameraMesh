@@ -138,11 +138,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1823158}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 346889927}
   - {fileID: 638743861}
   - {fileID: 467775685}
@@ -232,11 +232,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 142345257}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1535417921}
   - {fileID: 872730359}
   - {fileID: 1176097671}
@@ -280,11 +280,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 256720538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1535417921}
   - {fileID: 69361273}
   - {fileID: 872730359}
@@ -420,11 +420,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 492680878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 346889927}
   - {fileID: 467775685}
   - {fileID: 1640461719}
@@ -559,11 +559,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 576839922}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 467775685}
   - {fileID: 1176097671}
   - {fileID: 921613219}
@@ -606,7 +606,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577314680}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.53135884, y: 1.0175781, z: 0.01905179}
+  m_LocalPosition: {x: 0.5490254, y: 1.0175781, z: 0.027718544}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538152574}
@@ -621,11 +621,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 577314680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1139926651}
   - {fileID: 921613219}
   - {fileID: 711752782}
@@ -715,7 +715,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711752781}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.827, y: 0, z: -1.096}
+  m_LocalPosition: {x: 1.88, y: 0, z: -1.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -746,7 +746,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743144360}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.81435883, y: 1.0175781, z: -0.68928146}
+  m_LocalPosition: {x: 0.8320254, y: 1.0175781, z: -0.6806147}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538152574}
@@ -761,11 +761,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 743144360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1139926651}
   - {fileID: 711752782}
   - {fileID: 1822064277}
@@ -974,11 +974,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1135943627}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1640461719}
   - {fileID: 467775685}
   - {fileID: 921613219}
@@ -1205,11 +1205,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1276849749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 1640461719}
   - {fileID: 921613219}
   - {fileID: 1139926651}
@@ -1325,11 +1325,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1601947351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cd795797f906469fcc0188101bf57, type: 3}
+  m_Script: {fileID: 11500000, guid: 269d32d12cc92d144b16fd5cded8c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PowerOn: 1
-  camVertices:
+  vertices:
   - {fileID: 467775685}
   - {fileID: 1535417921}
   - {fileID: 1176097671}

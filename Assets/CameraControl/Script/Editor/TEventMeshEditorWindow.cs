@@ -39,11 +39,6 @@ namespace TMesh
             animBool_storyCamera.valueChanged.AddListener(Repaint);
         }
 
-        protected override void OnSceneGUI(SceneView sceneView)
-        {
-            OnEditorModeHotkey<TCameraVertex>(sceneView);
-            OnEditorModeSelect<TCameraVertex>(sceneView);
-        }
         //DrawMeshConstructTool();
         //👇👇👇
         //OnDrawTool();

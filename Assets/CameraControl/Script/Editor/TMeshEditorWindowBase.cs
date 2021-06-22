@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public abstract class TMeshEditorWindowBase<Vertex> : EditorWindow where Vertex:TVertex
+    public abstract class TMeshEditorWindowBase<TVertex> : EditorWindow where TVertex: TMesh.TVertex
     {
         protected void OnDestroy()
         {
@@ -68,13 +68,16 @@ namespace TMesh
         public static bool trangleEditorMode = false;
 
 
-        protected abstract void OnSceneGUI(SceneView sceneView);
-
+        protected void OnSceneGUI(SceneView sceneView)
+        {
+            OnEditorModeHotkey(sceneView);
+            OnEditorModeSelect(sceneView);
+        }
         /// <summary>
         /// 编辑模式下的快捷键
         /// </summary>
         /// <param name="sceneView"></param>
-        protected static void OnEditorModeHotkey<T>(SceneView sceneView) where T : TVertex
+        protected static void OnEditorModeHotkey(SceneView sceneView)
         {
             if (!vertexEditorMode)
                 return;
@@ -85,7 +88,7 @@ namespace TMesh
              Event.current.keyCode == KeyCode.Q
             )
             {
-                GeneralVertex<T>();
+                GeneralVertex<TVertex>();
             }
             if (Event.current.type == EventType.KeyDown &&
                 Event.current.control == true &&
@@ -100,7 +103,7 @@ namespace TMesh
         /// 编辑模式下的选择过滤
         /// </summary>
         /// <param name="sceneView"></param>
-        protected static void OnEditorModeSelect<T>(SceneView sceneView) where T : TVertex
+        protected static void OnEditorModeSelect(SceneView sceneView)
         {
             if (Selection.objects.Length <= 0)
             {
@@ -185,9 +188,9 @@ namespace TMesh
             }
         }
 
-        static void GeneralVertex<T>() where T:TVertex
+        static void GeneralVertex<T>() where T: TMesh.TVertex
         {
-            var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+            var tCameraVertexs = GameObject.FindObjectsOfType<T>();
 
             //Selection.activeObject = SceneView.currentDrawingSceneView;
             var sceneView = SceneView.currentDrawingSceneView;
@@ -205,7 +208,7 @@ namespace TMesh
                 name = string.Format("CVertex ({0})", tCameraVertexs.Length);
             }
 
-            var gobj = new GameObject(name, new System.Type[] { typeof(TCameraVertex) });
+            var gobj = new GameObject(name, new System.Type[] { typeof(T) });
 
             Undo.RegisterCreatedObjectUndo(gobj, "Create TCameraVertex");
 
@@ -293,12 +296,12 @@ namespace TMesh
                     buttonStr = vertexEditorMode ? "生成Camera顶点<Ctrl +Q>" : "生成Camera顶点";
                     if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,激活快捷键<Ctrl + Q>")))
                     {
-                        GeneralVertex<Vertex>();
+                        GeneralVertex<TVertex>();
                     }
 
                     if (GUILayout.Button("选中所有顶点"))
                     {
-                        var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+                        var tCameraVertexs = GameObject.FindObjectsOfType<TVertex>();
 
                         var gobjs = new List<Object>();
                         for (int i = 0; i < tCameraVertexs.Length; i++)
@@ -519,7 +522,7 @@ namespace TMesh
                         }
 
                         maskSwitch = false;
-                        var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+                        var tCameraVertexs = GameObject.FindObjectsOfType<TVertex>();
 
                         var gobjs = new List<Object>();
                         for (int i = 0; i < tCameraVertexs.Length; i++)
@@ -655,11 +658,11 @@ namespace TMesh
                 return;
             }
 
-            var tCameraVertexList = new List<TCameraVertex>();
+            var tCameraVertexList = new List<TVertex>();
             for (int i = 0; i < Selection.gameObjects.Length; i++)
             {
                 var gobj = Selection.gameObjects[i];
-                var vertex = gobj.GetComponent<TCameraVertex>();
+                var vertex = gobj.GetComponent<TVertex>();
                 if (vertex == null)
                     continue;
 
@@ -721,7 +724,7 @@ namespace TMesh
         protected static bool maskSwitch = false;
         protected static void MaskAllVertex()
         {
-            var tCameraVertexs = GameObject.FindObjectsOfType<TCameraVertex>();
+            var tCameraVertexs = GameObject.FindObjectsOfType<TVertex>();
 
             var gobjs = new List<Object>();
             for (int i = 0; i < tCameraVertexs.Length; i++)

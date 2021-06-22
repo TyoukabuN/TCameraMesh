@@ -31,9 +31,9 @@ namespace TMesh
         }
 
 
-        protected static TCameraVertex[] book;
-        protected static Dictionary<TCameraVertex, bool> book2;
-        protected static bool TryGetClockwiseOrderLoop(TCameraVertex[] vertices,int step = 0)
+        protected static TVertex[] book;
+        protected static Dictionary<TVertex, bool> book2;
+        protected static bool TryGetClockwiseOrderLoop(TVertex[] vertices,int step = 0)
         {
             if (step == 3)
             {
@@ -61,17 +61,17 @@ namespace TMesh
             return false;
         }
 
-        public static bool TryGetClockwiseOrder(TCameraVertex[] vertices,out TCameraVertex[] res)
+        public static bool TryGetClockwiseOrder(TVertex[] vertices,out TVertex[] res)
         {
-            book = new TCameraVertex[3];
-            book2 = new Dictionary<TCameraVertex, bool>();
+            book = new TVertex[3];
+            book2 = new Dictionary<TVertex, bool>();
             var res1 = TryGetClockwiseOrderLoop(vertices);
             
             res = book;
 
             return res1;
         }
-        public static bool TryNewTrangleFormVertices(TCameraVertex[] vertices,out TTrangle trangle)
+        public static bool TryNewTrangleFormVertices(TVertex[] vertices,out TTrangle trangle)
         {
             trangle = null;
             TCameraMesh tCamearMesh = null;
@@ -81,7 +81,7 @@ namespace TMesh
                 return false;
             }
 
-            TCameraVertex[] positiveOrder;
+            TVertex[] positiveOrder;
             if (!TryGetClockwiseOrder(vertices,out positiveOrder))
             {
                 return false;
@@ -100,7 +100,7 @@ namespace TMesh
             UnityEditor.Undo.RegisterCreatedObjectUndo(gobj, "New Trangle");
 
             trangle = gobj.GetComponent<TTrangle>();
-            trangle.camVertices = positiveOrder;
+            trangle.vertices = positiveOrder;
 
             gobj.transform.SetParent(tCamearMesh.transform, false);
             trangle.MoveToCentroid();
@@ -117,7 +117,7 @@ namespace TMesh
             return true;
         }
 
-        public static bool IsTrangleExists(TCameraVertex[] tCameraVertices)
+        public static bool IsTrangleExists<TVertex>(TVertex[] tCameraVertices) where TVertex: TMesh.TVertex
         {
             TCameraMesh tCamearMesh = null;
 
@@ -131,7 +131,7 @@ namespace TMesh
                 return false;
             }
 
-            var dict = new Dictionary<TCameraVertex, bool>();
+            var dict = new Dictionary<TVertex, bool>();
             for (int i = 0; i < tCameraVertices.Length; i++)
             {
                 var vertex = tCameraVertices[i];
@@ -142,7 +142,7 @@ namespace TMesh
             {
                 var trangle = tCamearMesh.TCameraTrangles[i];
 
-                if (trangle.camVertices.All((vertex) => dict.ContainsKey(vertex)))
+                if (trangle.vertices.All((vertex) => dict.ContainsKey(vertex as TVertex)))
                 {
                     return true;
                 }

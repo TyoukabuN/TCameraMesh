@@ -63,14 +63,14 @@ namespace TMesh
             {
                 if (PowerOn)
                 {
-                    vertices = tri.Vertices.ToArray();
-                    var eulerAngles = tri.camVertices[0].EularAngle * weight[0] +
-                        tri.camVertices[1].EularAngle * weight[1] +
-                        tri.camVertices[2].EularAngle * weight[2];
+                    var tVertices = tri.vertices;
+                    var eulerAngles = (tVertices[0] as TCameraVertex).EularAngle * weight[0] +
+                        (tVertices[1] as TCameraVertex).EularAngle * weight[1] +
+                        (tVertices[2] as TCameraVertex).EularAngle * weight[2];
 
-                    var pivotPosition = tri.camVertices[0].PivotPosition * weight[0] +
-                        tri.camVertices[1].PivotPosition * weight[1] +
-                        tri.camVertices[2].PivotPosition * weight[2];
+                    var pivotPosition = (tVertices[0] as TCameraVertex).PivotPosition * weight[0] +
+                        (tVertices[1] as TCameraVertex).PivotPosition * weight[1] +
+                        (tVertices[2] as TCameraVertex).PivotPosition * weight[2];
 
                     //Add Other args
 

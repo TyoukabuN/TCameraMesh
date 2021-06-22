@@ -109,9 +109,9 @@ namespace TMesh
                             return;
 
                         var tri = mesh.CurrentTrangle;
-                        transform.position = tri.camVertices[0].transform.position * weight[0] +
-                            tri.camVertices[1].transform.position * weight[1] +
-                            tri.camVertices[2].transform.position * weight[2];
+                        transform.position = tri.vertices[0].transform.position * weight[0] +
+                            tri.vertices[1].transform.position * weight[1] +
+                            tri.vertices[2].transform.position * weight[2];
                     }
                     catch (Exception e)
                     {

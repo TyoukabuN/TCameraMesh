@@ -37,13 +37,6 @@ namespace TMesh
             animBool_storyCamera.valueChanged.AddListener(Repaint);
         }
 
-        protected override void OnSceneGUI(SceneView sceneView)
-        {
-            OnEditorModeHotkey<TCameraVertex>(sceneView);
-            OnEditorModeSelect<TCameraVertex>(sceneView);
-        }
-
-
         //DrawMeshConstructTool();
         //👇👇👇
         //OnDrawTool();
@@ -137,7 +130,7 @@ namespace TMesh
                         {
                             foreach (var trangle in pTCameraTrangle.targets)
                             {
-                                foreach (var vertex in trangle.camVertices)
+                                foreach (TCameraVertex vertex in trangle.vertices)
                                 {
                                     if (vertex)
                                     {
@@ -152,7 +145,7 @@ namespace TMesh
 
                         if (pTCameraVertex.targets.Count > 0)
                         {
-                            foreach (var vertex in pTCameraVertex.targets)
+                            foreach (TCameraVertex vertex in pTCameraVertex.targets)
                             {
                                 if (vertex)
                                 {

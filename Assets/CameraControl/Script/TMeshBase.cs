@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 
 namespace TMesh
 {
-    public abstract class TMeshBase : MonoBehaviour
+    public abstract class TMeshBase: MonoBehaviour
     {
         public bool PowerOn = true;
         public bool GizmosOn = true;
@@ -186,9 +186,9 @@ namespace TMesh
         //    trangles = null;
         //    return false;
         //}
-        public List<TCameraVertex> GetAllVertices()
+        public List<TVertex> GetAllVertices()
         {
-            var vertices = new List<TCameraVertex>();
+            var vertices = new List<TVertex>();
             for (int i = 0; i < TCameraTrangles.Count; i++)
             {
                 var tri = TCameraTrangles[i];
@@ -196,9 +196,9 @@ namespace TMesh
                 if (tri == null)
                     break;
 
-                for (int j = 0; j < tri.camVertices.Length; j++)
+                for (int j = 0; j < tri.vertices.Length; j++)
                 {
-                    var ver = tri.camVertices[j];
+                    var ver = tri.vertices[j];
 
                     if (ver == null)
                         break;
