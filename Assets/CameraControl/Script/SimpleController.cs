@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TCam;
+using TMesh;
 using System;
 
 
-namespace TCam
+namespace TMesh
 {
     [ExecuteAlways]
     public class SimpleController : MonoBehaviour
@@ -16,13 +16,13 @@ namespace TCam
         public Transform AxiY;
         public Transform AxiX;
 
-        private string HorizontalAxi = "Horizontal";
-        private string VerticalAxi = "Vertical";
+        protected string HorizontalAxi = "Horizontal";
+        protected string VerticalAxi = "Vertical";
         public float Speed = 0.4f;
 #if TYOU_LAB
         [SerializeField]
 #endif
-        private bool m_FixedPositionToMeshsSurface = true;
+        protected bool m_FixedPositionToMeshsSurface = true;
         public bool FixedPositionToMeshsSurface
         {
             get
@@ -39,7 +39,7 @@ namespace TCam
             current = this;
 
             TCameraMesh mesh;
-            if (TCam.TCameraUtility.TryGetCameraMesh(out mesh))
+            if (TMesh.TCameraUtility.TryGetCameraMesh(out mesh))
             {
                 mesh.SetTarget(transform);
                 //mesh.OnPositionChanged.RemoveListener(OnPositionChanged);
@@ -101,7 +101,7 @@ namespace TCam
             if (FixedPositionToMeshsSurface)
             {
                 TCameraMesh mesh;
-                if (TCam.TCameraUtility.TryGetCameraMesh(out mesh))
+                if (TMesh.TCameraUtility.TryGetCameraMesh(out mesh))
                 {
                     try
                     {

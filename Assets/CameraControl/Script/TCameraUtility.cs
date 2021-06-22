@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TCam
+namespace TMesh
 {
     public static class TCameraUtility
     {
@@ -35,7 +35,7 @@ namespace TCam
             return CalOrienttionSign(vertices) < 0;
         }
 
-        public static bool IsPositiveOrder(TCameraTrangle tTrangle)
+        public static bool IsPositiveOrder(TTrangle tTrangle)
         {
             return CalOrienttionSign(tTrangle.camVertices) < 0;
         }

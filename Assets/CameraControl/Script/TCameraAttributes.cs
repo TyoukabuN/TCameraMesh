@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TCam;
+using TMesh;
 
-namespace TCam
+namespace TMesh
 {
     public sealed class TSaveDuringPlayAttribute : System.Attribute
     {

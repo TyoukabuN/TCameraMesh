@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TCam
+namespace TMesh
 {
     [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
-    public class TCameraTrangle : MonoBehaviour
+    public class TTrangle : MonoBehaviour
     {
         public bool PowerOn = true;
 
@@ -23,7 +23,7 @@ namespace TCam
             }
         }
 
-        private List<Vector3> m_Vertices;
+        protected List<Vector3> m_Vertices;
         public List<Vector3> Vertices
         {
             get {
@@ -60,7 +60,7 @@ namespace TCam
 
             return true;
         }
-        private void RefreshVertices()
+        protected void RefreshVertices()
         {
             if (camVertices == null)
             {
@@ -76,7 +76,7 @@ namespace TCam
             }
         }
 
-        private void OnValidate()
+        protected void OnValidate()
         {
             RefreshVertices();
             MoveToCentroid();

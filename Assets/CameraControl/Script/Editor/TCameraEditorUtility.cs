@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-namespace TCam
+namespace TMesh
 { 
     public class TCameraEditorUtility
     {
@@ -31,9 +31,9 @@ namespace TCam
         }
 
 
-        private static TCameraVertex[] book;
-        private static Dictionary<TCameraVertex, bool> book2;
-        private static bool TryGetClockwiseOrderLoop(TCameraVertex[] vertices,int step = 0)
+        protected static TCameraVertex[] book;
+        protected static Dictionary<TCameraVertex, bool> book2;
+        protected static bool TryGetClockwiseOrderLoop(TCameraVertex[] vertices,int step = 0)
         {
             if (step == 3)
             {
@@ -71,7 +71,7 @@ namespace TCam
 
             return res1;
         }
-        public static bool TryNewTrangleFormVertices(TCameraVertex[] vertices,out TCameraTrangle trangle)
+        public static bool TryNewTrangleFormVertices(TCameraVertex[] vertices,out TTrangle trangle)
         {
             trangle = null;
             TCameraMesh tCamearMesh = null;
@@ -87,7 +87,7 @@ namespace TCam
                 return false;
             }
 
-            var tCameraTrangle = GameObject.FindObjectsOfType<TCameraTrangle>();
+            var tCameraTrangle = GameObject.FindObjectsOfType<TTrangle>();
 
             var name = "CTrangle";
             if (tCameraTrangle.Length > 0)
@@ -96,10 +96,10 @@ namespace TCam
             }
 
 
-            var gobj = new GameObject(name,typeof(TCameraTrangle));
+            var gobj = new GameObject(name,typeof(TTrangle));
             UnityEditor.Undo.RegisterCreatedObjectUndo(gobj, "New Trangle");
 
-            trangle = gobj.GetComponent<TCameraTrangle>();
+            trangle = gobj.GetComponent<TTrangle>();
             trangle.camVertices = positiveOrder;
 
             gobj.transform.SetParent(tCamearMesh.transform, false);
@@ -183,8 +183,8 @@ namespace TCam
             DiamondPurple
         }
 
-        private static GUIContent[] labelIcons;
-        private static GUIContent[] largeIcons;
+        protected static GUIContent[] labelIcons;
+        protected static GUIContent[] largeIcons;
 
         public static void SetIcon(GameObject gObj, LabelIcon icon)
         {
@@ -206,7 +206,7 @@ namespace TCam
             SetIcon(gObj, largeIcons[(int)icon].image as Texture2D);
         }
 
-        private static void SetIcon(GameObject gObj, Texture2D texture)
+        protected static void SetIcon(GameObject gObj, Texture2D texture)
         {
             var ty = typeof(EditorGUIUtility);
             var mi = ty.GetMethod("SetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
@@ -220,7 +220,7 @@ namespace TCam
             mi.Invoke(null, new object[] { gObj, null });
         }
 
-        private static GUIContent[] GetTextures(string baseName, string postFix, int startIndex, int count)
+        protected static GUIContent[] GetTextures(string baseName, string postFix, int startIndex, int count)
         {
             GUIContent[] guiContentArray = new GUIContent[count];
 
