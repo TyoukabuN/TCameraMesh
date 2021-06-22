@@ -13,12 +13,21 @@ namespace TMesh
 {
     public class TEventMeshEditorWindow : TMeshEditorWindowBase<TEventVertex>
     {
-        static TCameraEditorWindow current;
+        static TEventMeshEditorWindow current;
 
-        [MenuItem("TMesh/Event Mesh %#T")]
+        [MenuItem("TMesh/Event Mesh %#G")]
         static void Open()
         {
-            EditorWindow.GetWindow<TEventMeshEditorWindow>().Init();
+            if (!current)
+            {
+                current = EditorWindow.GetWindow<TEventMeshEditorWindow>();
+                current.Init();
+            }
+            else
+            {
+                current.Close();
+                current = null;
+            }
         }
 
         public static AnimBoolHandle animBool_storyCamera;

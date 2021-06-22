@@ -17,7 +17,15 @@ namespace TMesh
         [MenuItem("TMesh/Camera Mesh %#T")]
         static void Open()
         {
-            EditorWindow.GetWindow<TCameraEditorWindow>().Init();
+            if (!current)
+            {
+                current = EditorWindow.GetWindow<TCameraEditorWindow>();
+                current.Init();
+            } else
+            {
+                current.Close();
+                current = null;
+            }
         }
 
         public static AnimBoolHandle animBool_storyCamera;

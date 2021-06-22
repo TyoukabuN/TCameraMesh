@@ -12,8 +12,6 @@ namespace TMesh
 {
     public abstract class TMeshEditorWindowBase<Vertex> : EditorWindow where Vertex:TVertex
     {
-        static TCameraEditorWindow current;
-
         protected void OnDestroy()
         {
             SceneView.onSceneGUIDelegate -= OnSceneGUI;
