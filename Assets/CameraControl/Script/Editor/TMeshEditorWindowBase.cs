@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public abstract class TMeshEditorWindowBase<TVertex> : EditorWindow where TVertex: TMesh.TVertex
+    public abstract class TMeshEditorWindowBase<TVertex, Trangle> : EditorWindow  where TVertex: TMesh.TVertex where Trangle:TMesh.TTrangle
     {
         protected void OnDestroy()
         {
@@ -95,7 +95,7 @@ namespace TMesh
                  Event.current.keyCode == KeyCode.X
                 )
             {
-                CombineVerticesAsTrangle();
+                CombineVerticesToTrangle();
             }
         }
 
@@ -418,7 +418,7 @@ namespace TMesh
             buttonStr = vertexEditorMode ? "合并顶点成三角形<Ctrl +X>" : "合并顶点成三角形";
             if (GUILayout.Button(new GUIContent(buttonStr, "<顶点>编辑模式下,激活快捷键<Ctrl +X>")))
             {
-                CombineVerticesAsTrangle();
+                CombineVerticesToTrangle();
             }
 
             EditorGUILayout.EndVertical();
@@ -650,7 +650,7 @@ namespace TMesh
             WWW www = new WWW("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi");
             Application.OpenURL(www.url);
         }
-        protected static void CombineVerticesAsTrangle()
+        protected static void CombineVerticesToTrangle()
         {
             if (Selection.gameObjects.Length <= 0)
             {
@@ -735,27 +735,7 @@ namespace TMesh
                 EditorUtility.SetDirty(gobj);
             }
         }
-        public static string GetScriptStorePath()
-        {
-            var root = FindTCameraRoot();
 
-            return System.IO.Path.Combine(root, "ScriptableObject");
-        }
-        public static string FindTCameraRoot()
-        {
-            string res = string.Empty;
-            var guids = AssetDatabase.FindAssets(string.Format("{0} t:Script", "TCameraMesh"));
-            if (guids.Length <= 0)
-            {
-                return string.Empty;
-            }
-
-            res = AssetDatabase.GUIDToAssetPath(guids[0]);
-
-            res = res.Replace("/Script/TCameraMesh.cs", string.Empty);
-
-            return res;
-        }
     }
 
     public class AnimBoolHandle : AnimBool
@@ -811,12 +791,12 @@ namespace TMesh
         public static T2 Get<T2>() where T2 : ScriptableObject
         {
 
-            string path = TCameraEditorWindow.FindTCameraRoot();
-            if (!AssetDatabase.IsValidFolder(TCameraEditorWindow.GetScriptStorePath()))
+            string path = util.FindTCameraRoot();
+            if (!AssetDatabase.IsValidFolder(util.GetScriptStorePath()))
             {
                 path = AssetDatabase.CreateFolder(path, "ScriptableObject");
             }
-            path = System.IO.Path.Combine(TCameraEditorWindow.GetScriptStorePath(), "{0}.asset");
+            path = System.IO.Path.Combine(util.GetScriptStorePath(), "{0}.asset");
             path = string.Format(path, typeof(T2).Name);
             T2 objScript = AssetDatabase.LoadAssetAtPath(path, typeof(T2)) as T2;
             if (objScript == null)

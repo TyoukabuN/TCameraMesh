@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace TMesh
 {
@@ -75,6 +76,11 @@ namespace TMesh
                 }
             }
         }
+
+        public virtual void Tick() { }
+
+        public virtual void OnEnterTrangle() { }
+        public virtual void OnExitTrangle() { }
 
         protected void OnValidate()
         {

@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public class TCameraEditorWindow : TMeshEditorWindowBase<TCameraVertex>
+    public class TCameraEditorWindow : TMeshEditorWindowBase<TCameraVertex,TTrangle>
     {
         static TCameraEditorWindow current;
 

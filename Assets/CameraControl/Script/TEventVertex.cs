@@ -8,7 +8,6 @@ namespace TMesh
     [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TEventVertex : TVertex
     {
-        public Vector3 EularAngle = Vector3.zero;
-        public Vector3 PivotPosition = Vector3.zero;
     }
+
 }

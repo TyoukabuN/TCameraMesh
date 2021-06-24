@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public class TEventMeshEditorWindow : TMeshEditorWindowBase<TEventVertex>
+    public class TEventMeshEditorWindow : TMeshEditorWindowBase<TEventVertex,TTrangle>
     {
         static TEventMeshEditorWindow current;
 

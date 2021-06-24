@@ -71,7 +71,7 @@ namespace TMesh
 
             return res1;
         }
-        public static bool TryNewTrangleFormVertices(TVertex[] vertices,out TTrangle trangle)
+        public static bool TryNewTrangleFormVertices<Trangle>(TVertex[] vertices, out Trangle trangle) where Trangle : TTrangle
         {
             trangle = null;
             TCameraMesh tCamearMesh = null;
@@ -87,7 +87,7 @@ namespace TMesh
                 return false;
             }
 
-            var tCameraTrangle = GameObject.FindObjectsOfType<TTrangle>();
+            var tCameraTrangle = GameObject.FindObjectsOfType<Trangle>();
 
             var name = "CTrangle";
             if (tCameraTrangle.Length > 0)
@@ -96,10 +96,10 @@ namespace TMesh
             }
 
 
-            var gobj = new GameObject(name,typeof(TTrangle));
+            var gobj = new GameObject(name,typeof(Trangle));
             UnityEditor.Undo.RegisterCreatedObjectUndo(gobj, "New Trangle");
 
-            trangle = gobj.GetComponent<TTrangle>();
+            trangle = gobj.GetComponent<Trangle>();
             trangle.vertices = positiveOrder;
 
             gobj.transform.SetParent(tCamearMesh.transform, false);
@@ -149,6 +149,28 @@ namespace TMesh
             }
 
             return false;
+        }
+
+        public static string GetScriptStorePath()
+        {
+            var root = FindTCameraRoot();
+
+            return System.IO.Path.Combine(root, "ScriptableObject");
+        }
+        public static string FindTCameraRoot()
+        {
+            string res = string.Empty;
+            var guids = AssetDatabase.FindAssets(string.Format("{0} t:Script", "TCameraMesh"));
+            if (guids.Length <= 0)
+            {
+                return string.Empty;
+            }
+
+            res = AssetDatabase.GUIDToAssetPath(guids[0]);
+
+            res = res.Replace("/Script/TCameraMesh.cs", string.Empty);
+
+            return res;
         }
 
         public enum LabelIcon
