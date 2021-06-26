@@ -10,24 +10,42 @@ namespace TMesh
 { 
     public class TCameraEditorUtility
     {
-        public static bool TryGetCameraMesh(out TCameraMesh tCameraMesh)
+        public static bool TryGetCameraMesh<Mesh>(out Mesh mesh) where Mesh:TMesh.TMeshBase
         {
-            tCameraMesh = GameObject.FindObjectOfType<TCameraMesh>();
+            mesh = GameObject.FindObjectOfType<Mesh>();
+            var type = typeof(Mesh);
 
-            if (tCameraMesh == null)
+            if (mesh == null)
             {
-                GameObject gobj = new GameObject("TCameraMesh");
+                string name = string.Empty;
+                if (type == typeof(TCameraMesh))
+                {
+                    name = "TCameraMesh";
+                }
+                else if (type == typeof(TEventMesh))
+                {
+                    name = "TEventMesh";
+                }
+
+                GameObject gobj = new GameObject(name);
                 gobj.transform.position = Vector3.zero;
-                tCameraMesh = gobj.AddComponent<TCameraMesh>();
+                mesh = gobj.AddComponent<Mesh>();
                 SetIcon(gobj, Icon.DiamondPurple);
             }
 
-            if (tCameraMesh != null)
+            if (mesh != null)
             {
-                TCameraMesh.currentTCameraMesh = tCameraMesh;
+                if (type == typeof(TCameraMesh))
+                {
+                    TCameraMesh.currentTCameraMesh = mesh as TCameraMesh;
+                }
+                else if(type == typeof(TEventMesh))
+                {
+                    TEventMesh.current = mesh as TEventMesh;
+                }
             }
 
-            return tCameraMesh != null;
+            return mesh != null;
         }
 
 
@@ -71,10 +89,11 @@ namespace TMesh
 
             return res1;
         }
-        public static bool TryNewTrangleFormVertices<Trangle>(TVertex[] vertices, out Trangle trangle) where Trangle : TTrangle
+
+        public static bool TryNewTrangleFormVertices<Trangle,Mesh>(TVertex[] vertices, out Trangle trangle) where Trangle : TTrangle where Mesh : TMesh.TMeshBase
         {
             trangle = null;
-            TCameraMesh tCamearMesh = null;
+            Mesh tCamearMesh = null;
 
             if (!TryGetCameraMesh(out tCamearMesh))
             {
@@ -99,7 +118,7 @@ namespace TMesh
             var gobj = new GameObject(name,typeof(Trangle));
             UnityEditor.Undo.RegisterCreatedObjectUndo(gobj, "New Trangle");
 
-            trangle = gobj.GetComponent<Trangle>();
+            trangle = gobj.GetComponent(typeof(Trangle)) as Trangle;
             trangle.vertices = positiveOrder;
 
             gobj.transform.SetParent(tCamearMesh.transform, false);
@@ -117,9 +136,9 @@ namespace TMesh
             return true;
         }
 
-        public static bool IsTrangleExists<TVertex>(TVertex[] tCameraVertices) where TVertex: TMesh.TVertex
+        public static bool IsTrangleExists<TVertex,Mesh>(TVertex[] tCameraVertices) where TVertex: TMesh.TVertex where Mesh : TMesh.TMeshBase
         {
-            TCameraMesh tCamearMesh = null;
+            Mesh tCamearMesh = null;
 
             if (!TryGetCameraMesh(out tCamearMesh))
             {

@@ -19,9 +19,6 @@ namespace TMesh
     {
         [HideInInspector]
         public static TCameraMesh currentTCameraMesh;
-        //[HideInInspector]
-        // protected Dictionary<TCameraVertex, List<TTrangle>> vertex2TranglesDict = new Dictionary<TCameraVertex, List<TTrangle>>();
-
       
         /// <summary>
         /// will pass some args of tCameraVertex

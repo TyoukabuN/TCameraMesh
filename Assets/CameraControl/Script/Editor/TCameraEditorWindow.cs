@@ -10,21 +10,43 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public class TCameraEditorWindow : TMeshEditorWindowBase<TCameraVertex,TTrangle>
+    public class TCameraEditorWindow : TMeshEditorWindowBase<TCameraVertex, TCameraTrangle, TCameraMesh>
     {
         static TCameraEditorWindow current;
+
+        private static void WindowSwitch(bool enabled)
+        {
+            if (!current)
+            {
+                current = EditorWindow.GetWindow<TCameraEditorWindow>();
+                current.Init();
+            }
+            else
+            {
+                try
+                {
+                    current.Close();
+                    current = null;
+                }
+                catch
+                {
+                    current = EditorWindow.GetWindow<TCameraEditorWindow>();
+                    current.Init();
+                    enabled = true;
+                }
+            }
+        }
 
         [MenuItem("TMesh/Camera Mesh %#T")]
         static void Open()
         {
             if (!current)
             {
-                current = EditorWindow.GetWindow<TCameraEditorWindow>();
-                current.Init();
-            } else
+                WindowSwitch(true);
+            } 
+            else
             {
-                current.Close();
-                current = null;
+                WindowSwitch(false);
             }
         }
 
@@ -35,6 +57,16 @@ namespace TMesh
             base.OnEnable();
             animBool_storyCamera = new AnimBoolHandle("TCameraMesh_animBool_storyCamera", true);
             animBool_storyCamera.valueChanged.AddListener(Repaint);
+
+            MeshVisualize(true);
+            MeshObjectIconVisualize(true);
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            MeshVisualize(false);
+            MeshObjectIconVisualize(false);
         }
 
         //DrawMeshConstructTool();

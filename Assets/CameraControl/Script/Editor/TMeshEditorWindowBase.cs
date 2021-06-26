@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace TMesh
 {
-    public abstract class TMeshEditorWindowBase<TVertex, Trangle> : EditorWindow  where TVertex: TMesh.TVertex where Trangle:TMesh.TTrangle
+    public abstract class TMeshEditorWindowBase<TVertex, Trangle, Mesh> : EditorWindow  where TVertex: TMesh.TVertex where Trangle:TTrangle where Mesh:TMesh.TMeshBase
     {
         protected void OnDestroy()
         {
@@ -62,6 +62,11 @@ namespace TMesh
 
             animBool_other = new AnimBoolHandle("TCameraMesh_animBool_other", false);
             animBool_other.valueChanged.AddListener(Repaint);
+        }
+
+        protected virtual void OnDisable()
+        { 
+
         }
 
         public static bool vertexEditorMode = false;
@@ -218,7 +223,7 @@ namespace TMesh
 
             Selection.activeObject = gobj;
 
-            TCameraMesh tCamearMesh = null;
+            Mesh tCamearMesh = null;
             if (util.TryGetCameraMesh(out tCamearMesh))
             {
                 gobj.transform.SetParent(tCamearMesh.transform, false);
@@ -350,7 +355,7 @@ namespace TMesh
                             tCameraTrangles.Add(vertex);
                         }
 
-                        TCameraMesh tCamearMesh = null;
+                        Mesh tCamearMesh = null;
 
                         if (!util.TryGetCameraMesh(out tCamearMesh))
                         {
@@ -372,7 +377,7 @@ namespace TMesh
 
                     if (GUILayout.Button("选中所有三角形"))
                     {
-                        var objs = GameObject.FindObjectsOfType<TTrangle>();
+                        var objs = GameObject.FindObjectsOfType<Trangle>();
 
                         var gobjs = new List<Object>();
                         for (int i = 0; i < objs.Length; i++)
@@ -473,7 +478,7 @@ namespace TMesh
                             util.SetIcon(checker, util.Icon.CirclePurple);
 
 
-                            TCameraMesh mesh;
+                            Mesh mesh;
                             if (util.TryGetCameraMesh(out mesh))
                             {
                                 mesh.SetTarget(checker.transform);
@@ -499,7 +504,7 @@ namespace TMesh
 
                     if (GUILayout.Button("选择网格对象"))
                     {
-                        var objs = GameObject.FindObjectsOfType<TCameraMesh>();
+                        var objs = GameObject.FindObjectsOfType<Mesh>();
 
                         var gobjs = new List<Object>();
                         for (int i = 0; i < objs.Length; i++)
@@ -512,53 +517,17 @@ namespace TMesh
 
                     if (GUILayout.Button("显示/隐藏所有标记"))
                     {
-                        if (!maskSwitch)
-                        {
-                            MaskAllVertex();
-                            MaskAllTrangle();
-                            MoveAllTrangleGobjToCentroid();
-                            maskSwitch = true;
-                            return;
-                        }
-
-                        maskSwitch = false;
-                        var tCameraVertexs = GameObject.FindObjectsOfType<TVertex>();
-
-                        var gobjs = new List<Object>();
-                        for (int i = 0; i < tCameraVertexs.Length; i++)
-                        {
-                            var gobj = tCameraVertexs[i].gameObject;
-
-                            Undo.RecordObject(gobj, "Clear All TCameraVertex Mask");
-
-                            util.CleanIcon(gobj);
-
-                            EditorUtility.SetDirty(gobj);
-                        }
-
-                        var objs = GameObject.FindObjectsOfType<TTrangle>();
-
-                        gobjs = new List<Object>();
-                        for (int i = 0; i < objs.Length; i++)
-                        {
-                            var gobj = objs[i].gameObject;
-
-                            Undo.RecordObject(gobj, "Clear All TCameraTrangle Mask");
-
-                            util.CleanIcon(gobj);
-
-                            EditorUtility.SetDirty(gobj);
-                        }
+                        MeshObjectIconVisualize(!maskSwitch);
                     }
+
 
                     if (GUILayout.Button("显示/隐藏网格"))
                     {
-                        TCameraMesh tCamearMesh = null;
+                        Mesh tCamearMesh = null;
 
                         if (util.TryGetCameraMesh(out tCamearMesh))
                         {
-                            tCamearMesh.GizmosOn = !tCamearMesh.GizmosOn;
-                            SceneView.RepaintAll();
+                            MeshVisualize(!tCamearMesh.GizmosOn);
                         }
                     }
 
@@ -592,6 +561,58 @@ namespace TMesh
             DrawOtherTool();
 
             EditorGUILayout.EndScrollView();
+        }
+
+        protected void MeshObjectIconVisualize(bool enable)
+        {
+            if (enable)
+            {
+                MaskAllVertex();
+                MaskAllTrangle();
+                MoveAllTrangleGobjToCentroid();
+                maskSwitch = true;
+                return;
+            }
+
+            maskSwitch = false;
+            var tCameraVertexs = GameObject.FindObjectsOfType<TVertex>();
+
+            var gobjs = new List<Object>();
+            for (int i = 0; i < tCameraVertexs.Length; i++)
+            {
+                var gobj = tCameraVertexs[i].gameObject;
+
+                Undo.RecordObject(gobj, "Clear All TCameraVertex Mask");
+
+                util.CleanIcon(gobj);
+
+                EditorUtility.SetDirty(gobj);
+            }
+
+            var objs = GameObject.FindObjectsOfType<Trangle>();
+
+            gobjs = new List<Object>();
+            for (int i = 0; i < objs.Length; i++)
+            {
+                var gobj = objs[i].gameObject;
+
+                Undo.RecordObject(gobj, "Clear All TCameraTrangle Mask");
+
+                util.CleanIcon(gobj);
+
+                EditorUtility.SetDirty(gobj);
+            }
+        }
+
+        protected void MeshVisualize(bool enable)
+        {
+            Mesh tCamearMesh = null;
+
+            if (util.TryGetCameraMesh(out tCamearMesh))
+            {
+                tCamearMesh.GizmosOn = enable;
+                SceneView.RepaintAll();
+            }
         }
 
         protected void DrawList<T>(string title, Processer<T> processer) where T : Component
@@ -678,15 +699,15 @@ namespace TMesh
                 return;
             }
 
-            if (util.IsTrangleExists(tCameraVertexList.ToArray()))
+            if (util.IsTrangleExists<TVertex,Mesh>(tCameraVertexList.ToArray()))
             {
                 EditorUtility.DisplayDialog("提醒", "已存在拥有相同顶点的三角形", "知道了");
                 return;
             }
 
 
-            TTrangle trangle;
-            if (TCameraEditorUtility.TryNewTrangleFormVertices(tCameraVertexList.ToArray(), out trangle))
+            Trangle trangle;
+            if (util.TryNewTrangleFormVertices<Trangle, Mesh>(tCameraVertexList.ToArray(), out trangle))
             {
                 util.SetIcon(trangle.gameObject, util.Icon.DiamondTeal);
             }
@@ -694,16 +715,15 @@ namespace TMesh
 
         protected static void MoveAllTrangleGobjToCentroid()
         {
-            var objs = GameObject.FindObjectsOfType<TTrangle>();
+            var objs = GameObject.FindObjectsOfType<Trangle>();
 
-            var gobjs = new List<Object>();
-            for (int i = 0; i < objs.Length; i++)
-            {
-                var gobj = objs[i].gameObject;
-                util.SetIcon(gobj, util.Icon.DiamondTeal);
-            }
+            //for (int i = 0; i < objs.Length; i++)
+            //{
+            //    var gobj = objs[i].gameObject;
+            //    util.SetIcon(gobj, util.Icon.DiamondTeal);
+            //}
 
-            objs = GameObject.FindObjectsOfType<TTrangle>();
+            objs = GameObject.FindObjectsOfType<Trangle>();
             for (int i = 0; i < objs.Length; i++)
             {
                 objs[i].MoveToCentroid();
@@ -712,7 +732,7 @@ namespace TMesh
 
         protected static void MaskAllTrangle()
         {
-            var objs = GameObject.FindObjectsOfType<TTrangle>();
+            var objs = GameObject.FindObjectsOfType<Trangle>();
 
             var gobjs = new List<Object>();
             for (int i = 0; i < objs.Length; i++)
@@ -798,7 +818,9 @@ namespace TMesh
             }
             path = System.IO.Path.Combine(util.GetScriptStorePath(), "{0}.asset");
             path = string.Format(path, typeof(T2).Name);
+
             T2 objScript = AssetDatabase.LoadAssetAtPath(path, typeof(T2)) as T2;
+
             if (objScript == null)
             {
                 objScript = ScriptableObject.CreateInstance<T2>();

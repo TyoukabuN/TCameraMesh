@@ -214,7 +214,7 @@ namespace TMesh
 
 #if UNITY_EDITOR
         protected Dictionary<TTrangle, Mesh> tempMesh = new Dictionary<TTrangle, Mesh>();
-        void OnDrawGizmos()
+        protected virtual void OnDrawGizmos()
         {
             if (!GizmosOn)
                 return;

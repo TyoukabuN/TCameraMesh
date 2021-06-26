@@ -19,9 +19,21 @@ namespace TMesh
 
 
         private TEventTrangle _parent;
+        private Transform _lastParentTrans = null;
         public TEventTrangle parent
         {
-            get { return _parent; }
+            get {
+                if (!transform.parent)
+                    return null;
+
+                if (_lastParentTrans != transform.parent)
+                { 
+                    _parent = transform.parent.GetComponent<TEventTrangle>();
+                    _lastParentTrans = transform.parent;
+                }
+
+                return _parent; 
+            }
             set { SetParent(value); }
         }
         public void SetParent(TEventTrangle parent)
@@ -33,11 +45,18 @@ namespace TMesh
             }
             parent.AddChild(this);
         }
-        public void AddChild(TEventTrangle parent)
+        public void AddChild(TEventTrangle obj)
         {
-            if (!parent.Childs.Contains(parent))
+            if (!Childs.Contains(obj))
             {
-                parent.Childs.Add(parent);
+                Childs.Add(obj);
+
+                obj.parent = this;
+
+                if (this.parent == this)
+                {
+                    this.parent = null;
+                }
             }
         }
         public TEventTrangle GetChild(int index)
@@ -189,15 +208,15 @@ namespace TMesh
                 switch (display)
                 {
                     case EventTypeForEditor.Timeline:
-                        //Undo.RecordObject(obj, "TEvent Add PlayableDirector Event");
+                        Undo.RecordObject(obj, "TEvent Add PlayableDirector Event");
                         obj.Events.Add(new TEvent(TriggerEventType.Timeline));
                         break;
                     case EventTypeForEditor.Animation:
-                        //Undo.RecordObject(obj, "TEvent Add Animation Event");
+                        Undo.RecordObject(obj, "TEvent Add Animation Event");
                         obj.Events.Add(new TEvent(TriggerEventType.Animation));
                         break;
                     case EventTypeForEditor.Do:
-                        //Undo.RecordObject(obj, "TEvent Add Animation Event");
+                        Undo.RecordObject(obj, "TEvent Add Animation Event");
                         obj.Events.Add(new TEvent(TriggerEventType.Do));
                         break;
                     default:
@@ -219,7 +238,6 @@ namespace TMesh
 
         }
     }
-
 
     [Serializable]
     public class OnTargetEvent : UnityEvent
@@ -345,4 +363,5 @@ namespace TMesh
         {
         }
     }
+
 }
