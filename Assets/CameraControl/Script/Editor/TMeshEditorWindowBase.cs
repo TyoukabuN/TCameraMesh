@@ -493,10 +493,12 @@ namespace TMesh
                             }
                         }
 
+                        FixedCheckerPositionToMeshSurface = EditorPrefs.GetBool("FixedCheckerPositionToMeshSurface", true);
                         FixedCheckerPositionToMeshSurface = EditorGUILayout.ToggleLeft("贴合网格表面", FixedCheckerPositionToMeshSurface, GUILayout.MaxWidth(86));
                         if (SimpleController.current != null)
                         {
                             SimpleController.current.FixedPositionToMeshsSurface = FixedCheckerPositionToMeshSurface;
+                            EditorPrefs.SetBool("FixedCheckerPositionToMeshSurface", FixedCheckerPositionToMeshSurface);
                         }
                     }
                     EditorGUILayout.EndHorizontal();

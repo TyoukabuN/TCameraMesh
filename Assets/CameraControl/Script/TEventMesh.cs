@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace TMesh
 {
-#if UNITY_EDITOR
-    [ExecuteAlways]
-#endif
     [DisallowMultipleComponent]
     [HelpURL("https://docs.qq.com/doc/DY0JqTVFyWGRFSGdi")]
     public class TEventMesh : TMeshBase
@@ -124,8 +123,11 @@ namespace TMesh
             Profiler.EndSample();
         }
 
+#if UNITY_EDITOR
 
-        protected override void OnDrawGizmos()
+        Dictionary<TTrangle, Mesh> tempMesh = new Dictionary<TTrangle, Mesh>();
+
+        void OnDrawGizmos()
         {
             if (!GizmosOn)
                 return;
@@ -200,8 +202,7 @@ namespace TMesh
                 Gizmos.DrawLine(tri.transform.position, tri.transform.parent.position);
                 Gizmos.color = Color.white;
 
-                //UnityEditor.SceneView.currentDrawingSceneView.camera.   TODO: relationShip with camera zoom
-
+                //UnityEditor.SceneView.currentDrawingSceneView.camera.TODO: relationShip with camera zoom
                 Handles.color = Color.yellow;
                 var dir2This = tri.transform.position - tri.transform.parent.position;
                 var rot = Quaternion.LookRotation(dir2This.normalized);
@@ -227,5 +228,8 @@ namespace TMesh
             }
 
         }
+#endif
+
     }
+
 }

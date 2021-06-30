@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace TMesh
 {
@@ -88,6 +91,73 @@ namespace TMesh
             }
             return false;
         }
+#if UNITY_EDITOR
+
+        Dictionary<TTrangle, Mesh> tempMesh = new Dictionary<TTrangle, Mesh>();
+
+        void OnDrawGizmos()
+        {
+            if (!GizmosOn)
+                return;
+
+            if (TCameraTrangles.Count < 1)
+                return;
+
+            for (int i = 0; i < TCameraTrangles.Count; i++)
+            {
+                var tri = TCameraTrangles[i];
+
+                if (tri == null)
+                    break;
+
+                if (tri.Vertices.Count < 3)
+                    break;
+
+                if (tempMesh == null)
+                {
+                    tempMesh = new Dictionary<TTrangle, Mesh>();
+                }
+
+                Mesh mesh = null;
+                if (!tempMesh.ContainsKey(tri))
+                {
+                    tempMesh[tri] = new Mesh();
+                }
+                mesh = tempMesh[tri];
+                mesh.vertices = tri.Vertices.ToArray();
+                mesh.triangles = new int[] { 0, 1, 2 };
+                mesh.RecalculateNormals();
+                mesh.RecalculateBounds();
+
+                Gizmos.color = Color.red;
+                if (Target != null)
+                {
+                    if (TCameraUtility.IsInsideTrangleS2(mesh.vertices, Target.position))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                }
+
+                Gizmos.DrawMesh(mesh);
+
+                Gizmos.color = Color.white;
+
+                if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D11 ||
+                    SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Direct3D12)
+                {
+                    Gizmos.DrawWireMesh(mesh);
+                }
+                else
+                {
+                    Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[1]);
+                    Gizmos.DrawLine(mesh.vertices[0], mesh.vertices[2]);
+                    Gizmos.DrawLine(mesh.vertices[1], mesh.vertices[2]);
+                }
+
+            }
+        }
+#endif
+
 
         public class CameraMeshEvent : UnityEvent<Vector3,Vector3> { }
         public class CameraMeshEventWithSplitArgs : UnityEvent<float, float, float> { }
