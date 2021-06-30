@@ -52,6 +52,12 @@ namespace TMesh
                 mesh.OnComplexEvent.AddListener(OnComplexEvent);
             }
 
+            TEventMesh eventMesh;
+            if (TMesh.TCameraUtility.TryGetCameraMesh(out eventMesh))
+            {
+                eventMesh.SetTarget(transform);
+            }
+
             if (AxiY == null)
             {
                 var obj = new GameObject("AxiY");

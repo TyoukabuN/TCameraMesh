@@ -63,6 +63,22 @@ namespace TMesh
         {
             return Childs[index];
         }
+        public bool AnyRelationship(TEventTrangle trangle)
+        {
+            if (trangle == null)
+                return false;
+
+            if (this.GetInstanceID() == trangle.GetInstanceID())
+                return true;
+
+            if (this.parent && this.parent.GetInstanceID() == trangle.GetInstanceID())
+                return true;
+
+            if (trangle.parent && trangle.parent.GetInstanceID() == this.GetInstanceID())
+                return true;
+
+            return false;
+        }
 
         public override void Tick()
         {
@@ -149,6 +165,7 @@ namespace TMesh
                     SerializedProperty playableDirector = eventElement.FindPropertyRelative("playableDirector");
                     SerializedProperty animation = eventElement.FindPropertyRelative("animation");
                     SerializedProperty onTrigger = eventElement.FindPropertyRelative("onTrigger");
+                    SerializedProperty canTriggerTimes = eventElement.FindPropertyRelative("canTriggerTimes");
                     TriggerCondition condition = (TriggerCondition)(eventElement.FindPropertyRelative("condition").enumValueIndex);
                     var useUnscaledTime = eventElement.FindPropertyRelative("useUnscaledTime");
                     var waitingSceond = eventElement.FindPropertyRelative("waitingSceond");
@@ -181,6 +198,9 @@ namespace TMesh
                         EditorGUILayout.PropertyField(useUnscaledTime, new GUIContent("不受TimeScaleT影响"));
                         EditorGUILayout.PropertyField(waitingSceond, new GUIContent("等待时间"));
                     }
+
+                    EditorGUILayout.PropertyField(canTriggerTimes, new GUIContent("可触发次数(<0时不限次数)"));
+
                     EditorGUILayout.EndVertical();
 
                     if (GUILayout.Button("删除"))
@@ -268,7 +288,7 @@ namespace TMesh
 
         public bool isDone = false;
 
-        public int CanTriggerTimes = 1;
+        public int canTriggerTimes = 1;
         public enum TriggerCondition : int
         {
             Enter,
@@ -356,7 +376,13 @@ namespace TMesh
                 onTrigger.Invoke();
             }
 
-            isDone = true;
+            isDone = enterCount >= canTriggerTimes;
+
+            if (canTriggerTimes < 0)
+            {
+                isDone = false;
+                canTriggerTimes = -1;
+            }
         }
 
         public void Dispose()

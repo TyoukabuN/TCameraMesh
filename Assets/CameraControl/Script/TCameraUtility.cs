@@ -7,21 +7,21 @@ namespace TMesh
 {
     public static class TCameraUtility
     {
-        public static bool TryGetCameraMesh(out TCameraMesh tCameraMesh)
+        public static bool TryGetCameraMesh<Mesh>(out Mesh tCameraMesh)where Mesh:TMeshBase
         {
-            tCameraMesh = GameObject.FindObjectOfType<TCameraMesh>();
+            tCameraMesh = GameObject.FindObjectOfType<Mesh>();
 
             if (tCameraMesh == null)
             {
                 GameObject gobj = new GameObject("TCameraMesh");
                 gobj.transform.position = Vector3.zero;
-                tCameraMesh = gobj.AddComponent<TCameraMesh>();
+                tCameraMesh = gobj.AddComponent<Mesh>();
             }
 
-            if (tCameraMesh != null)
-            {
-                TCameraMesh.currentTCameraMesh = tCameraMesh;
-            }
+            //if (tCameraMesh != null)
+            //{
+            //    TCameraMesh.currentTCameraMesh = tCameraMesh;
+            //}
             
             return tCameraMesh != null;
         }

@@ -62,6 +62,8 @@ namespace TMesh
             protected set { m_CurrentTrangle = value; }
         }
 
+        public TTrangle LastTrangle;
+
         public bool AddTrangle(TTrangle trangle)
         {
             CleanUp();
@@ -80,6 +82,12 @@ namespace TMesh
         {
             Target = target;
         }
+
+        protected bool NoneTriangle()
+        {
+            return TCameraTrangles.Count <= 0;
+        }
+
 
         protected void CleanUp()
         {
@@ -121,7 +129,7 @@ namespace TMesh
 
         protected abstract bool TrangleCheckAndProcess(TTrangle tri);
 
-        protected void Update()
+        protected virtual void Update()
         {
             Profiler.BeginSample("TCamreraMesh");
 
@@ -161,6 +169,7 @@ namespace TMesh
 
                 if (IsTrangleValid(tri) && TrangleCheckAndProcess(tri))
                 {
+                    LastTrangle = CurrentTrangle;
                     CurrentTrangle = tri;
                     break;
                 }
