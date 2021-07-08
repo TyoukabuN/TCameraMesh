@@ -2,66 +2,70 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMesh;
-using System;
 
+
+[ExecuteInEditMode]
 public class CollisionDetection : MonoBehaviour
 {
-    public TTrangle shape1;
-    public TTrangle shape2;
-}
+    public List<Edge> Edges = new List<Edge>();
 
-public class TriPolygon: TTrangle
-{
-    public Edge[] edges;
-    public Edge GetEdge(int index)
+    public static CollisionDetection current;
+    private void Awake()
     {
-        if (edges == null)
-        {
-            edges = new Edge[3] {
-                new Edge(this[0].transform.position,this[1].transform.position),
-                new Edge(this[0].transform.position,this[2].transform.position),
-                new Edge(this[1].transform.position,this[2].transform.position),
-            };
-        }
-
-        return edges[index];
-    }
-}
-
-public class Edge
-{
-    public Vector3[] points = new Vector3[2];
-
-    public Edge(Vector3 p1, Vector3 p2)
-    {
-        points[0] = p1;
-        points[1] = p2;
+        if (current == null)
+            current = this;
     }
 
-    public Vector3 this[int index]
+    public static bool AddEdge(Edge edge)
     {
-        get
-        {
-            return points[index];
-        }
-    }
-    public bool IsSameEdge(Edge y)
-    {
-        var x = this;
+        if (current == null)
+            current = GameObject.FindObjectOfType<CollisionDetection>();
 
-        if (x[0] == y[0] && x[1] == y[1])
-        {
-            return true;
-        }
-        else if (x[0] == y[1] && x[1] == y[0])
-        {
-            return true;
-        }
+        if (current == null)
+            return false;
 
-        return false;
+        if (current.Edges.Contains(edge))
+            return false;
+
+
+        current.Edges.Add(edge);
+        return true;
+        
     }
 
+    public static bool RemoveEdge(Edge edge)
+    {
+        if (current == null)
+            current = GameObject.FindObjectOfType<CollisionDetection>();
 
+        if (current == null)
+            return false;
+
+        if (!current.Edges.Contains(edge))
+            return false;
+
+
+        current.Edges.Remove(edge);
+        return true;
+
+    }
+    void Update()
+    {
+        UpdateEdge();
+        UpdateEdge();
+        UpdateEdge();
+    }
+
+    public void UpdateEdge()
+    {
+        foreach (var edge in Edges)
+        {
+            if (!edge)
+                continue;
+
+            edge.Tick();
+        }
+    }
 }
 
 
